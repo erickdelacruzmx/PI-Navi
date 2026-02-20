@@ -1,0 +1,102 @@
+* --- CONFIGURACIÓN BASE --- */
+body { 
+    font-family: 'Poppins', sans-serif; 
+    background-color: #ffffff;
+    transition: background-color 0.4s ease, color 0.4s ease;
+}
+
+/* --- DIVISIONES DE SECCIÓN --- */
+section {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    position: relative;
+}
+
+section:nth-child(even) {
+    box-shadow: inset 0 20px 30px -20px rgba(0,0,0,0.03), inset 0 -20px 30px -20px rgba(0,0,0,0.03);
+}
+
+/* --- MODO OSCURO --- */
+.dark-mode { background-color: #0f172a !important; color: #f1f5f9 !important; }
+.dark-mode section { border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
+.dark-mode section:not(.cta-gradient-animated) { background-color: #0f172a !important; }
+.dark-mode h1, .dark-mode h2, .dark-mode h3, .dark-mode span:not(.text-yellow-300) { color: #ffffff !important; }
+.dark-mode p, .dark-mode .text-slate-600, .dark-mode .text-gray-700 { color: #cbd5e1 !important; }
+.dark-mode header { background-color: rgba(15, 23, 42, 0.9) !important; border-bottom: 1px solid #1e293b; }
+.dark-mode .bg-white { background-color: #1e293b !important; }
+.dark-mode .bg-slate-50 { background-color: #111827 !important; }
+
+/* Botón blanco en modo oscuro */
+.dark-mode #cta a {
+    background-color: #ffffff !important;
+    color: #4f46e5 !important;
+    box-shadow: 0 10px 25px rgba(255, 255, 255, 0.1);
+}
+
+/* --- SMARTPHONE MOCKUP --- */
+.phone-card {
+    border: 12px solid #1e293b;
+    border-radius: 3.5rem;
+    height: 520px;
+    width: 280px;
+    background-color: #ffffff;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    margin: 0 auto;
+    transition: all 0.3s ease;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
+    position: relative;
+}
+
+.dark-mode .phone-card { 
+    background-color: #000000 !important; 
+    border-color: #334155 !important; 
+    box-shadow: 0 0 20px rgba(99, 102, 241, 0.2); 
+}
+
+.phone-screen {
+    flex: 1;
+    padding: 1.5rem;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.phone-header {
+    width: 40%; height: 18px; background: #1e293b;
+    border-radius: 0 0 15px 15px; margin: 0 auto;
+    position: relative;
+    z-index: 10;
+}
+.dark-mode .phone-header { background: #334155; }
+
+/* --- ANIMACIONES --- */
+.cta-gradient-animated {
+    background: linear-gradient(270deg, #6366f1, #a855f7, #ec4899);
+    background-size: 400% 400%;
+    animation: gradientMove 10s ease infinite;
+}
+
+@keyframes gradientMove {
+    0% {background-position: 0% 50%;}
+    50% {background-position: 100% 50%;}
+    100% {background-position: 0% 50%;}
+}
+
+.fade-up { animation: fadeUp 0.8s ease-out forwards; }
+@keyframes fadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+#theme-toggle {
+    position: fixed; bottom: 2rem; right: 2rem; z-index: 100;
+    width: 3.5rem; height: 3.5rem; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2); transition: all 0.3s;
+}
+
+.dark-mode .impact-card {
+    background-color: #1e293b !important;
+    border: 1px solid rgba(255,255,255,0.1);
+}

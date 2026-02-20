@@ -1,5 +1,5 @@
 from django.apps import AppConfig
 
-
-class DashboardConfig(AppConfig):
-    name = 'dashboard'
+class LandingConfig(AppConfig):
+    default_auto_field = 'django.db.models.BigAutoField'
+    name = 'landing'
