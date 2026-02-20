@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Navi - Aprender escuchando es divertido</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="./style.css">
+</head>
+<body class="text-slate-800 antialiased">
+
+    <button id="theme-toggle" class="bg-indigo-600 text-white hover:scale-110 active:scale-95">
+        <i id="theme-icon" class="fa-solid fa-moon text-xl"></i>
+    </button>
+
+    <header class="bg-white/90 backdrop-blur-md shadow sticky top-0 z-50 transition-colors duration-300">
+        <nav class="max-w-7xl mx-auto flex items-center justify-between px-6 py-4">
+            <div class="flex items-center gap-3">
+                <img src="images/NAVI6.png" alt="Logo Navi" class="h-10">
+                <span class="text-2xl font-bold text-indigo-600 tracking-tighter">Navi</span>
+            </div>
+            
+            <ul id="navbar-menu" class="hidden lg:flex gap-8 font-semibold text-sm">
+                <li><a href="#cta" class="hover:text-indigo-600 transition">Inicio</a></li>
+                <li><a href="#conoce-a-navi" class="hover:text-indigo-600 transition">¿Qué es Navi?</a></li>
+
+                <li><a href="#caracteristicas" class="hover:text-indigo-600 transition">Características</a></li>
+                <li><a href="#investigacion" class="hover:text-indigo-600 transition">Investigación</a></li>
+            </ul>
+
+            <button id="menu-toggle" class="lg:hidden text-indigo-600 text-2xl">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+        </nav>
+    </header>
+
+    <footer class="bg-slate-900 text-slate-400 py-16 px-6">
+        <div class="text-center pt-8 text-xs opacity-50">
+            &copy; 2026 Navi Educación Inclusiva.
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
