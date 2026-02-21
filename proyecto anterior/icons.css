@@ -1,0 +1,436 @@
+
+
+/* CLASE BASE PARA ICONOS DEL MENÚ */
+.menu-icon-mask {
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0;
+    background-color: currentColor; 
+    mask-size: contain;
+    mask-repeat: no-repeat;
+    mask-position: center;
+    -webkit-mask-size: contain;
+    -webkit-mask-repeat: no-repeat;
+    -webkit-mask-position: center;
+}
+
+/* Tablet: Iconos medianos */
+@media (min-width: 768px) {
+    .menu-icon-mask {
+        width: 48px;
+        height: 48px;
+    }
+}
+
+/* Desktop: Iconos grandes */
+@media (min-width: 1024px) {
+    .menu-icon-mask {
+        width: 56px;
+        height: 56px;
+    }
+}
+
+/* CLASE BASE PARA ICONOS DE CATEGORÍA DE JUEGOS/BIBLIOTECA */
+.category-icon-mask {
+    width: 72px;
+    height: 72px;
+    flex-shrink: 0;
+    background-color: currentColor;
+    mask-size: contain;
+    mask-repeat: no-repeat;
+    mask-position: center;
+    -webkit-mask-size: contain;
+    -webkit-mask-repeat: no-repeat;
+    -webkit-mask-position: center;
+}
+
+/* Tablet: Iconos medianos */
+@media (min-width: 768px) {
+    .category-icon-mask {
+        width: 96px;
+        height: 96px;
+    }
+}
+
+/* Desktop: Iconos grandes para pantallas táctiles */
+@media (min-width: 1024px) {
+    .category-icon-mask {
+        width: 56px;
+        height: 56px;
+    }
+}
+
+/* Desktop XL: Iconos extra grandes */
+@media (min-width: 1280px) {
+    .category-icon-mask {
+        width: 64px;
+        height: 64px;
+    }
+}
+
+/* Desktop 2XL: Iconos máximos */
+@media (min-width: 1536px) {
+    .category-icon-mask {
+        width: 72px;
+        height: 72px;
+    }
+}
+
+/* CLASE BASE PARA ICONOS DE CONFIGURACIÓN/ENCABEZADOS (20px) */
+.setting-icon-mask {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+    background-color: currentColor;
+    mask-size: contain;
+    mask-repeat: no-repeat;
+    mask-position: center;
+    -webkit-mask-size: contain;
+    -webkit-mask-repeat: no-repeat;
+    -webkit-mask-position: center;
+}
+
+
+/* CLASE BASE PARA ICONOS DE ÍTEMS DE ACTIVIDAD */
+.item-icon-mask {
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0;
+    background-color: #2b308b; /* Color de los íconos de actividad */
+    mask-size: contain;
+    mask-repeat: no-repeat;
+    mask-position: center;
+    -webkit-mask-size: contain;
+    -webkit-mask-repeat: no-repeat;
+    -webkit-mask-position: center;
+    margin-right: 8px; 
+}
+
+/* Tablet: Iconos medianos */
+@media (min-width: 768px) {
+    .item-icon-mask {
+        width: 48px;
+        height: 48px;
+    }
+}
+
+/* Desktop: Iconos grandes */
+@media (min-width: 1024px) {
+    .item-icon-mask {
+        width: 36px;
+        height: 36px;
+    }
+}
+
+/* Desktop XL: Iconos extra grandes */
+@media (min-width: 1280px) {
+    .item-icon-mask {
+        width: 40px;
+        height: 40px;
+    }
+}
+
+/* Desktop 2XL: Iconos máximos */
+@media (min-width: 1536px) {
+    .item-icon-mask {
+        width: 44px;
+        height: 44px;
+    }
+}
+
+/* ================================================= */
+/* === DEFINICIÓN DE MÁSCARAS ESPECÍFICAS (Rutas) === */
+/* ================================================= */
+
+/* MENÚ PRINCIPAL */
+.icon-biblioteca {
+    mask-image: url('icon/Libro.svg'); 
+    -webkit-mask-image: url('icon/Libro.svg');
+}
+.icon-juegos {
+    /* Fallback a un icono existente */
+    mask-image: url('icon/comunicativa.svg'); 
+    -webkit-mask-image: url('icon/comunicativa.svg');
+}
+.icon-configuracion {
+    mask-image: url('icon/Configuracion.svg'); 
+    -webkit-mask-image: url('icon/Configuracion.svg');
+}
+.icon-tutor {
+    mask-image: url('icon/Tutor.svg'); 
+    -webkit-mask-image: url('icon/Tutor.svg');
+}
+
+/* JUEGOS */
+.icon-comunicativa {
+    mask-image: url('icon/comunicativa.svg');
+    -webkit-mask-image: url('icon/comunicativa.svg');
+}
+.icon-auditiva {
+    mask-image: url('icon/auditiva.svg');
+    -webkit-mask-image: url('icon/auditiva.svg');
+}
+.icon-motor {
+    mask-image: url('icon/motor.svg');
+    -webkit-mask-image: url('icon/motor.svg');
+}
+.icon-socioemocional {
+    mask-image: url('icon/socioemocional.svg');
+    -webkit-mask-image: url('icon/socioemocional.svg');
+}
+
+/* BIBLIOTECA */
+.icon-canciones {
+    mask-image: url('icon/canciones.svg');
+    -webkit-mask-image: url('icon/canciones.svg');
+}
+.icon-cuentos {
+    mask-image: url('icon/cuentos.svg');
+    -webkit-mask-image: url('icon/cuentos.svg');
+}
+.icon-sonidos {
+    mask-image: url('icon/auditiva.svg');
+    -webkit-mask-image: url('icon/auditiva.svg');
+}
+.icon-favoritos {
+    mask-image: url('icon/socioemocional.svg');
+    -webkit-mask-image: url('icon/socioemocional.svg');
+}
+
+/* TUTOR VIRTUAL */
+.icon-chat-tutor {
+    mask-image: url('icon/chat.svg');
+    -webkit-mask-image: url('icon/chat.svg');
+}
+
+/* CONFIGURACIÓN */
+.icon-perfil {
+    mask-image: url('icon/perfil.svg');
+    -webkit-mask-image: url('icon/perfil.svg');
+}
+.icon-notificaciones {
+    mask-image: url('icon/notificaciones.svg');
+    -webkit-mask-image: url('icon/notificaciones.svg');
+}
+.icon-personalizacion {
+    mask-image: url('icon/personalizacion.svg');
+    -webkit-mask-image: url('icon/personalizacion.svg');
+}
+.icon-privacidad {
+    mask-image: url('icon/privacidad.svg');
+    -webkit-mask-image: url('icon/privacidad.svg');
+}
+
+
+/* ================================================= */
+/* === COLORES DE FONDO DE CATEGORÍAS === */
+/* ================================================= */
+
+/* JUEGOS */
+.categoria-comunicativa {
+    background-color: #d0ceff; /* morado */
+}
+.categoria-auditiva {
+    background-color: #ffd9fc; /*rosa*/
+}
+.categoria-motor {
+    background-color: #ffefbe; /* amarillo*/
+}
+.categoria-socioemocional {
+    background-color: #b8e0e3; /* verde */
+}
+
+/* BIBLIOTECA */
+.categoria-canciones {
+     background-color: #d0ceff; /* morado */
+}
+.categoria-cuentos {
+    background-color: #ffd9fc; /*rosa*/
+}
+.categoria-sonidos {
+   background-color: #ffefbe; /* amarillo*/
+}
+.categoria-favoritos {
+    background-color: #b8e0e3; /* verde */
+}
+
+/* CONFIGURACIÓN */
+.setting-perfil {
+    background-color: #eef2ff; /* Azul muy suave */
+}
+.setting-notificaciones {
+    background-color: #fffde7; /* Amarillo muy suave */
+}
+.setting-personalizacion {
+    background-color: #e8f5e9; /* Verde muy suave */
+}
+.setting-privacidad {
+    background-color: #ffebee; /* Rosa muy suave */
+}
+
+/* ITEM ICONS - Habilidad Comunicativa */
+.icon-sonido {
+    mask-image: url('icon/sonido.svg');
+    -webkit-mask-image: url('icon/sonido.svg');
+}
+.icon-tactil {
+    mask-image: url('icon/tactil.svg');
+    -webkit-mask-image: url('icon/tactil.svg');
+}
+.icon-robot {
+    mask-image: url('icon/Navi.svg');
+    -webkit-mask-image: url('icon/Navi.svg');
+}
+.icon-ritmo {
+    mask-image: url('icon/canciones.svg');
+    -webkit-mask-image: url('icon/canciones.svg');
+}
+.icon-escritura {
+    mask-image: url('icon/Navi.svg');
+    -webkit-mask-image: url('icon/Navi.svg');
+}
+.icon-libro {
+    mask-image: url('icon/Libro.svg');
+    -webkit-mask-image: url('icon/Libro.svg');
+}
+.icon-karaoke {
+    mask-image: url('icon/canciones.svg');
+    -webkit-mask-image: url('icon/canciones.svg');
+}
+.icon-preguntas {
+     mask-image: url('icon/comunicativa.svg');
+    -webkit-mask-image: url('icon/comunicativa.svg');
+}
+
+/* ITEM ICONS - EXPLORACION AUDITIVA */
+.icon-ambiental {
+    mask-image: url('icon/canciones.svg');
+    -webkit-mask-image: url('icon/canciones.svg');
+}
+.icon-secuencia {
+    mask-image: url('icon/sonido.svg');
+    -webkit-mask-image: url('icon/sonido.svg');
+}
+.icon-asociacion {
+   mask-image: url('icon/chek.svg');
+    -webkit-mask-image: url('icon/chek.svg');
+}
+.icon-espacial {
+    mask-image: url('icon/canciones.svg');
+    -webkit-mask-image: url('icon/canciones.svg');
+}
+.icon-persecusion {
+    mask-image: url('icon/canciones.svg'); 
+    -webkit-mask-image: url('icon/canciones.svg');
+}
+.icon-instrumentos {
+    mask-image: url('icon/instrumento.svg');
+    -webkit-mask-image: url('icon/instrumento.svg');
+}
+
+/* ITEM ICONS - DESARROLLO MOTOR */
+.icon-seguimiento {
+    mask-image: url('icon/motor.svg');
+    -webkit-mask-image: url('icon/motor.svg');
+}
+.icon-cubos {
+    mask-image: url('icon/tactil.svg');
+    -webkit-mask-image: url('icon/tactil.svg');
+}
+.icon-bloques {
+   mask-image: url('icon/tactil.svg');
+    -webkit-mask-image: url('icon/tactil.svg');
+}
+.icon-descubriendo {
+    mask-image: url('icon/motor.svg');
+    -webkit-mask-image: url('icon/motor.svg');
+}
+
+/* ITEM ICONS - HABILIDADES SOCIOEMOCIONALES */
+.icon-diario {
+    mask-image: url('icon/Libro.svg');
+    -webkit-mask-image: url('icon/Libro.svg');
+}
+.icon-emocional {
+    mask-image: url('icon/Navi.svg');
+    -webkit-mask-image: url('icon/Navi.svg');
+}
+.icon-equipo {
+   mask-image: url('icon/equipo.svg');
+    -webkit-mask-image: url('icon/equipo.svg');
+}
+
+/* ITEM ICONS -CANCIONES */
+.item-icon-mask.icon-unodos {
+    mask-image: url('icon/canciones.svg');
+    -webkit-mask-image: url('icon/canciones.svg');
+}
+.item-icon-mask.icon-abc {
+    mask-image: url('icon/canciones.svg');
+    -webkit-mask-image: url('icon/canciones.svg');
+}
+.item-icon-mask.icon-cabeza {
+    mask-image: url('icon/canciones.svg');
+    -webkit-mask-image: url('icon/canciones.svg');
+}
+.item-icon-mask.icon-vibora {
+    mask-image: url('icon/canciones.svg');
+    -webkit-mask-image: url('icon/canciones.svg');
+}
+.item-icon-mask.icon-trenecito {
+    mask-image: url('icon/canciones.svg');
+    -webkit-mask-image: url('icon/canciones.svg');
+}
+.item-icon-mask.icon-feliz {
+    mask-image: url('icon/canciones.svg');
+    -webkit-mask-image: url('icon/canciones.svg');
+}
+.item-icon-mask.icon-enojo {
+    mask-image: url('icon/canciones.svg');
+    -webkit-mask-image: url('icon/canciones.svg');
+}
+.item-icon-mask.icon-manita {
+    mask-image: url('icon/canciones.svg');
+    -webkit-mask-image: url('icon/canciones.svg');
+}
+
+/* ITEM ICONS CUENTOS */
+.item-icon-mask.icon-cerditos {
+    mask-image: url('icon/cuentos.svg');
+    -webkit-mask-image: url('icon/cuentos.svg');
+}
+.item-icon-mask.icon-gallinita {
+    mask-image: url('icon/cuentos.svg');
+    -webkit-mask-image: url('icon/cuentos.svg');
+}
+.item-icon-mask.icon-liebre {
+    mask-image: url('icon/cuentos.svg');
+    -webkit-mask-image: url('icon/cuentos.svg');
+}
+.icon-raton {
+    mask-image: url('icon/Libro.svg');
+    -webkit-mask-image: url('icon/Libro.svg');
+}
+
+
+/* ITEM ICONS  SONIDOS DEL MUNDO */
+.icon-animales {
+    mask-image: url('icon/animales.svg');
+    -webkit-mask-image: url('icon/animales.svg');
+}
+.icon-transporte {
+    mask-image: url('icon/transporte.svg');
+    -webkit-mask-image: url('icon/transporte.svg');
+}
+.icon-objetos {
+    mask-image: url('icon/objetos.svg');
+    -webkit-mask-image: url('icon/objetos.svg');
+}
+.icon-natural {
+    mask-image: url('icon/naturaleza.svg');
+    -webkit-mask-image: url('icon/naturaleza.svg');
+}
+
+
+
+
