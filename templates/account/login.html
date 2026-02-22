@@ -1,0 +1,66 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iniciar Sesión - Navi</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'css/login.css' %}">
+</head>
+<body class="login-body">
+    <div class="login-container">
+        <div class="login-box">
+            <!-- Botón de regreso al inicio -->
+            <div class="back-to-home">
+                <a href="{% url 'landing:index' %}" class="btn-back-home">
+                    <i class="fas fa-arrow-left"></i> Volver al inicio
+                </a>
+            </div>
+            
+            <div class="login-header">
+                <img src="{% static 'images/logo.png' %}" alt="Navi Logo" class="login-logo">
+                <h2>Iniciar Sesión</h2>
+                <p>Ingresa a tu cuenta para continuar</p>
+            </div>
+            
+            <form method="post" action="{% url 'account_login' %}">
+                {% csrf_token %}
+                
+                {% if form.non_field_errors %}
+                <div class="alert alert-error">
+                    {% for error in form.non_field_errors %}
+                        {{ error }}
+                    {% endfor %}
+                </div>
+                {% endif %}
+                
+                <div class="form-group">
+                    <label for="id_login">Correo electrónico:</label>
+                    <input type="email" name="login" id="id_login" class="form-control" 
+                           placeholder="ejemplo@correo.com" value="{{ form.login.value|default:'' }}" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="id_password">Contraseña:</label>
+                    <input type="password" name="password" id="id_password" class="form-control" 
+                           placeholder="••••••••" required>
+                </div>
+                
+                <div class="form-group remember-me">
+                    <input type="checkbox" name="remember" id="id_remember" {% if form.remember.value %}checked{% endif %}>
+                    <label for="id_remember">Recordarme</label>
+                </div>
+                
+                <button type="submit" class="btn-login">Iniciar Sesión</button>
+                
+                <div class="login-footer">
+                    <!-- Botón de registro con estilo -->
+                    <p>¿No tienes cuenta? <a href="{% url 'account_signup' %}" class="btn-register-link">Regístrate aquí</a></p>
+                    <p><a href="{% url 'account_reset_password' %}" class="forgot-password">¿Olvidaste tu contraseña?</a></p>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

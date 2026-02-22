@@ -1,0 +1,34 @@
+{% load static %}
+<header>
+    <div class="container header-content">
+        <div class="logo-container">
+            <img src="{% static 'images/logo.png' %}" alt="Logo de Navi">
+            <span class="logo-text">NAVI</span>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="{% url 'landing:index' %}#conoce-a-navi">Conoce a NAVI</a></li>
+                <li><a href="{% url 'landing:index' %}#caracteristicas">Características</a></li>
+                <li><a href="{% url 'landing:index' %}#investigacion">Investigación</a></li>
+                <li><a href="{% url 'landing:index' %}#objetivos">Objetivos</a></li>
+                <li><a href="{% url 'landing:index' %}#galeria">Galería</a></li>
+                <li><a href="{% url 'landing:index' %}#contacto">Contacto</a></li>
+                {% if user.is_authenticated %}
+                    <li class="user-menu">
+                        <span class="user-welcome">
+                            <i class="fas fa-user-circle"></i>
+                            Hola, {{ user.first_name|default:user.email }}
+                        </span>
+                        <a href="{% url 'account_logout' %}" class="logout-btn">
+                            <i class="fas fa-sign-out-alt"></i>
+                            Cerrar Sesión
+                        </a>
+                    </li>
+                {% else %}
+                    <li><a href="{% url 'account_login' %}" class="btn-login-nav">Iniciar Sesión</a></li>
+                    <li><a href="{% url 'account_signup' %}" class="btn-signup-nav">Registrarse</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
+</header>

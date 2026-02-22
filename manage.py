@@ -6,11 +6,8 @@ import sys
 
 def main():
     """Run administrative tasks."""
-<<<<<<< HEAD
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'NAVI.settings')
-=======
-    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'naviapp.settings')
->>>>>>> 1b7a20cafab0512b82cb22cccd352395195d6472
+
     try:
         from django.core.management import execute_from_command_line
     except ImportError as exc:

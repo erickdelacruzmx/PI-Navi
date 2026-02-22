@@ -1,0 +1,250 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Navi - Plataforma Educativa para Niños Ciegos{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/index.css' %}">
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero">
+    <div class="container hero-content">
+        <h1>NAVI: Nuevas formas de aprender</h1>
+        <p>Plataforma educativa creada para que niños con discapacidad visual de 3 a 7 años: aprendan, jueguen y exploren el mundo de forma autónoma y divertida.</p>
+        <div class="hero-buttons">
+            {% if user.is_authenticated %}
+                <a href="#" class="btn">Ver Mi Perfil</a>
+            {% else %}
+                <a href="#conoce-a-navi" class="btn">Más Información</a>
+                <a href="{% url 'account_login' %}" class="btn btn-secondary">Iniciar Sesión</a>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+<!-- Conoce a NAVI -->
+<section id="conoce-a-navi">
+    <div class="container">
+        <div class="section-title">
+            <h2>Conoce a NAVI</h2>
+        </div>
+        <div class="about-content">
+            <div class="about-text">
+                <p><strong>NAVI</strong> es una plataforma educativa digital inclusiva, diseñada específicamente para promover el aprendizaje y desarrollo cognitivo de niños con discapacidad visual, entre 3 y 7 años. A través de un entorno completamente sonoro, combina actividades guiadas por voz, juegos sensoriales y contenidos adaptados para garantizar una experiencia educativa accesible y significativa.</p>
+                
+                <h3 style="color: var(--primary); margin: 25px 0 15px; font-size: 1.5rem;">¿Por qué NAVI es diferente?</h3>
+                
+                <ul class="about-list">
+                    <li><strong>Entorno seguro y controlado:</strong> Espacio divertido y apropiado que convierte el aprendizaje en un juego, libre de distracciones y contenido inapropiado.</li>
+                    <li><strong>Enfoque multisensorial:</strong> Utiliza el sonido y el tacto como principales vías de exploración y descubrimiento para un aprendizaje significativo.</li>
+                    <li><strong>Ritmo personalizado:</strong> Sin prisa, sin presión. NAVI se adapta al ritmo de cada niño, garantizando que todos puedan avanzar con confianza.</li>
+                    <li><strong>Interfaz completamente audible:</strong> Navegación intuitiva diseñada específicamente para niños con discapacidad visual, sin necesidad de elementos visuales.</li>
+                </ul>
+            </div>
+            <div class="about-image"></div>
+        </div>
+    </div>
+</section>
+
+<!-- Características -->
+<section id="caracteristicas" class="features">
+    <div class="container">
+        <div class="section-title">
+            <h2>Características de Navi</h2>
+        </div>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-universal-access"></i>
+                </div>
+                <h3>Completamente Accesible</h3>
+                <p>Diseñada desde sus cimientos para ser utilizada por niños con discapacidad visual, con navegación intuitiva y controles adaptados.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-headphones"></i>
+                </div>
+                <h3>Interfaz Sonora</h3>
+                <p>Navegación completamente auditiva con instrucciones claras y feedback sonoro para cada interacción.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-child"></i>
+                </div>
+                <h3>Adaptada por Edad</h3>
+                <p>Contenido y actividades específicamente diseñadas para el rango de edad de 3 a 7 años, considerando sus capacidades cognitivas.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <h3>Seguimiento Personalizado</h3>
+                <p>Monitoreo del progreso individual con ajustes automáticos según el desarrollo de cada niño.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-gamepad"></i>
+                </div>
+                <h3>Enfoque Lúdico</h3>
+                <p>Aprendizaje a través del juego, con actividades divertidas que mantienen el interés y motivación de los niños.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <h3>Entorno Seguro</h3>
+                <p>Espacio libre de distracciones y contenido inapropiado, diseñado específicamente para niños pequeños.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Galería -->
+<section id="galeria" class="gallery">
+    <div class="container">
+        <div class="section-title">
+            <h2>Galería de Navi</h2>
+        </div>
+        <div class="gallery-grid">
+            <div class="gallery-item" style="background-image: url('{% static "images/galeria1.jpg" %}')"></div>
+            <div class="gallery-item" style="background-image: url('{% static "images/galeria2.jpg" %}')"></div>
+            <div class="gallery-item" style="background-image: url('{% static "images/galeria3.jpg" %}')"></div>
+        </div>
+    </div>
+</section>
+
+<!-- Investigación del mercado -->
+<section id="investigacion" class="market-research">
+    <div class="container">
+        <div class="section-title">
+            <h2>Investigación del Mercado</h2>
+        </div>
+        <div class="research-content">
+            <p>En Yucatán, donde más de 1200 niños viven con discapacidad visual (INEGI 2020), no existen plataformas educativas diseñadas específicamente para la primera infancia que sean completamente accesibles.</p>
+            <p>Navi cambia este paradigma con una <strong>selección especializada</strong> y <strong>adaptación a la edad</strong> de los usuarios, llenando un vacío crítico en el mercado educativo inclusivo.</p>
+            
+            <div class="stats">
+                <div class="stat-item">
+                    <div class="stat-number">1200+</div>
+                    <div class="stat-desc">Niños con discapacidad visual en Yucatán</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">3-7</div>
+                    <div class="stat-desc">Años, rango de edad objetivo</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">0</div>
+                    <div class="stat-desc">Plataformas similares actualmente</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Objetivos -->
+<section id="objetivos">
+    <div class="container">
+        <div class="section-title">
+            <h2>Objetivos</h2>
+        </div>
+        <table class="objectives-table">
+            <thead>
+                <tr>
+                    <th>Indicadores</th>
+                    <th>Acciones en la plataforma digital</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Crear experiencias para niños ciegos</td>
+                    <td>Desarrollar contenido táctil y auditivo adaptado, con navegación por voz y sonidos direccionales</td>
+                </tr>
+                <tr>
+                    <td>Fomentar el desarrollo cognitivo</td>
+                    <td>Implementar juegos educativos con retroalimentación auditiva inmediata y progresiva dificultad</td>
+                </tr>
+                <tr>
+                    <td>Adaptarse a necesidades individuales</td>
+                    <td>Ofrecer personalización según nivel de desarrollo, preferencias y ritmo de aprendizaje</td>
+                </tr>
+                <tr>
+                    <td>Promover aprendizaje lúdico</td>
+                    <td>Diseñar actividades divertidas y motivadoras con sistema de recompensas auditivas</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<!-- Objetivos a futuro -->
+<section class="features">
+    <div class="container">
+        <div class="section-title">
+            <h2>Objetivos a Futuro</h2>
+        </div>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-wave-square"></i>
+                </div>
+                <h3>Aprendizaje sensorial con audio</h3>
+                <p>Desarrollo de habilidades cognitivas mediante estímulos auditivos diseñados específicamente para niños con discapacidad visual.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-book"></i>
+                </div>
+                <h3>Biblioteca colaborativa accesible</h3>
+                <p>Plataforma comunitaria donde usuarios y educadores pueden compartir y acceder a recursos educativos en formatos accesibles.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-music"></i>
+                </div>
+                <h3>Cuaderno digital con interacción sonora</h3>
+                <p>Herramienta educativa que combina la escritura con retroalimentación auditiva para reforzar el aprendizaje de conceptos básicos.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-braille"></i>
+                </div>
+                <h3>Conversión de texto a braille para impresión</h3>
+                <p>Sistema que transforma contenido digital a formato braille físico, facilitando el acceso a materiales educativos impresos.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-wifi"></i>
+                </div>
+                <h3>Accesibilidad sin conexión a internet</h3>
+                <p>Funcionalidad completa disponible sin necesidad de conexión a internet, garantizando acceso continuo a los recursos educativos.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-puzzle-piece"></i>
+                </div>
+                <h3>Productos complementarios</h3>
+                <p>Desarrollo de herramientas y materiales adicionales que enriquecen la experiencia educativa y se adaptan a diferentes necesidades.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Registrarse navi codigo -->
+<section class="cta">
+    <div class="container">
+        <h2>¿Listo para conocer Navi?</h2>
+        <p>Descubre cómo nuestra plataforma puede transformar la experiencia educativa para niños con discapacidad visual</p>
+        {% if user.is_authenticated %}
+            <a href="#" class="btn">Ver Mi Perfil</a>
+        {% else %}
+            <a href="{% url 'account_signup' %}" class="btn">Registrarse Gratis</a>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/index.js' %}"></script>
+{% endblock %}

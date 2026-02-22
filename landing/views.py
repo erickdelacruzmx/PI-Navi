@@ -1,8 +1,8 @@
-from django.http import HttpResponse
-
-# Create your views here.
-
 from django.shortcuts import render
 
-def home(request):
-    return render(request, 'landing/index.html')
+def home(request):  # El nombre de la función puede ser 'home' o cualquier otro
+    context = {
+        'ano_actual': 2026,
+        'user': request.user,
+    }
+    return render(request, 'index.html', context)
