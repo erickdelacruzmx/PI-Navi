@@ -21,7 +21,7 @@ class Usuario(models.Model):
     nombres = models.CharField(max_length=40, db_column='nombres')
     apellidos = models.CharField(max_length=40, db_column='apellidos')
     correo = models.CharField(max_length=255, unique=True, db_column='correo')
-    contrasena = models.CharField(max_length=150, db_column='contrasena')
+    contrasena = models.CharField(max_length=255, db_column='contrasena')
     fechanac = models.DateTimeField(null=True, blank=True, db_column='fechanac')
     suscrito = models.BooleanField(default=False, db_column='suscrito')
     fecharegistro = models.DateTimeField(auto_now_add=True, db_column='fecharegistro')
