@@ -1,0 +1,154 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NAVI: Aprender Escuchando</title>
+    <script>
+        (function () {
+            const preference = localStorage.getItem('navi-theme-preference') || 'light';
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const shouldUseDark = preference === 'dark' || (preference === 'system' && prefersDark);
+            if (shouldUseDark) {
+                document.documentElement.classList.add('theme-dark');
+                document.body && document.body.classList.add('theme-dark');
+            }
+        })();
+    </script>
+    <link rel="icon" href="{% static "icon/Navi.svg" %}" type="image/svg+xml">
+    <link rel="stylesheet" href="{% static "icons.css" %}">
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="{% static "js/tailwind-config.js" %}"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="{% static "css/app.css" %}?v=20260225-1">
+
+    <!-- Vue 3 -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@3/dist/vue.global.js"></script>
+</head>
+<body class="min-h-screen">
+    <div id="app">
+        
+        <!-- Toast Notification -->
+        <div class="toast-notification" :class="{ 'show': showToast }" v-text="toastMessage"></div>
+
+        <button @click="toggleThemeQuick" type="button" class="theme-fab" :aria-label="isDarkTheme ? 'Activar modo claro' : 'Activar modo oscuro'" :title="isDarkTheme ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'">
+            <i :class="isDarkTheme ? 'fas fa-sun' : 'fas fa-moon'"></i>
+        </button>
+
+        {% include "landing/includes/app/nav_desktop.html" %}
+
+        {% include "landing/includes/app/section_navi.html" %}
+
+        <!-- ============================================
+             MAIN CONTENT AREA
+             ============================================ -->
+          <main class="container mx-auto px-4 py-8 lg:pb-8 pb-24 max-w-[95%] lg:max-w-[1440px] transition-all duration-400 fade-in-up"
+              v-show="currentMode === 'tutor' && currentSection !== 'navi'">
+
+            {% include "landing/includes/app/section_juegos.html" %}
+            {% include "landing/includes/app/section_biblioteca.html" %}
+            {% include "landing/includes/app/section_estadisticas.html" %}
+            {% include "landing/includes/app/section_configuracion.html" %}
+            {% include "landing/includes/app/section_perfil.html" %}
+
+        </main>
+
+        {% include "landing/includes/app/nav_mobile.html" %}
+        {% include "landing/includes/app/modals.html" %}
+
+    </div>
+
+    <script src="{% static "js/app.js" %}"></script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -4,136 +4,127 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registrarse - Navi</title>
+    <meta name="description" content="Únete a Navi y comienza tu viaje de aprendizaje">
+    <title>Crear Cuenta | Navi</title>
+    <script>
+        (function () {
+            const preference = localStorage.getItem('navi-theme-preference') || 'light';
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const shouldUseDark = preference === 'dark' || (preference === 'system' && prefersDark);
+            if (shouldUseDark) {
+                document.documentElement.classList.add('theme-dark');
+                document.body && document.body.classList.add('theme-dark');
+            }
+        })();
+    </script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="{% static 'css/login.css' %}">
-    <style>
-        .login-box {
-            max-width: 500px;
-        }
-        .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-        }
-        @media (max-width: 480px) {
-            .form-row {
-                grid-template-columns: 1fr;
-            }
-        }
-        .terms {
-            font-size: 13px;
-            color: #666;
-            margin-top: 15px;
-            text-align: center;
-        }
-        .terms a {
-            color: #667eea;
-            text-decoration: none;
-        }
-        .terms a:hover {
-            text-decoration: underline;
-        }
-    </style>
 </head>
 <body class="login-body">
+    <a href="{% url 'landing:index' %}" class="btn-back-home" aria-label="Volver a la página principal">
+        <i class="fas fa-arrow-left" aria-hidden="true"></i>
+        <span>Volver</span>
+    </a>
+
     <div class="login-container">
-        <div class="login-box">
-            <!-- Botón de regreso al inicio (NUEVO) -->
-            <div class="back-to-home">
-                <a href="{% url 'landing:index' %}" class="btn-back-home">
-                    <i class="fas fa-arrow-left"></i> Volver al inicio
-                </a>
-            </div>
-            
-            <div class="login-header">
-                <img src="{% static 'images/logo.png' %}" alt="Navi Logo" class="login-logo">
-                <h2>Crear cuenta gratuita</h2>
-                <p>Únete a la primera plataforma educativa sonora</p>
-            </div>
-            
-            <form method="post" action="{% url 'account_signup' %}">
+        <main class="login-box" role="main">
+            <header class="login-header">
+                <h1>Crear Cuenta</h1>
+                <p>Únete a la comunidad de Navi</p>
+            </header>
+
+            {% if form.non_field_errors %}
+                {% for error in form.non_field_errors %}
+                    <div class="alert alert-error" role="alert">
+                        <i class="fas fa-exclamation-circle" aria-hidden="true"></i>
+                        <span>{{ error }}</span>
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            <form method="post" action="{% url 'account_signup' %}" novalidate>
                 {% csrf_token %}
                 
-                {% if form.non_field_errors %}
-                <div class="alert alert-error">
-                    {% for error in form.non_field_errors %}
-                        {{ error }}
-                    {% endfor %}
-                </div>
-                {% endif %}
-                
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="id_first_name">
-                            <i class="fas fa-user"></i>
-                            Nombre:
-                        </label>
-                        <input type="text" name="first_name" id="id_first_name" class="form-control" 
-                               placeholder="Tu nombre" value="{{ form.first_name.value|default:'' }}">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="id_last_name">
-                            <i class="fas fa-user"></i>
-                            Apellido:
-                        </label>
-                        <input type="text" name="last_name" id="id_last_name" class="form-control" 
-                               placeholder="Tu apellido" value="{{ form.last_name.value|default:'' }}">
-                    </div>
-                </div>
-                
                 <div class="form-group">
-                    <label for="id_email">
-                        <i class="fas fa-envelope"></i>
-                        Correo electrónico:
+                    <label for="register-email">
+                        <i class="fas fa-envelope" aria-hidden="true"></i>
+                        <span>Correo electrónico</span>
                     </label>
-                    <input type="email" name="email" id="id_email" class="form-control" 
-                           placeholder="ejemplo@correo.com" value="{{ form.email.value|default:'' }}" required>
+                    <input 
+                        type="email" 
+                        id="register-email" 
+                        name="email" 
+                        class="form-control" 
+                        placeholder="tu@email.com" 
+                        required 
+                        autocomplete="email"
+                        aria-required="true"
+                        aria-describedby="email-error"
+                        value="{{ form.email.value|default:'' }}">
                     {% if form.email.errors %}
-                    <small class="error">{{ form.email.errors.0 }}</small>
+                        <span class="error" id="email-error" role="alert">
+                            {% for error in form.email.errors %}{{ error }}{% endfor %}
+                        </span>
                     {% endif %}
                 </div>
-                
+
                 <div class="form-group">
-                    <label for="id_password1">
-                        <i class="fas fa-lock"></i>
-                        Contraseña:
+                    <label for="register-password">
+                        <i class="fas fa-lock" aria-hidden="true"></i>
+                        <span>Contraseña</span>
                     </label>
-                    <input type="password" name="password1" id="id_password1" class="form-control" 
-                           placeholder="Mínimo 8 caracteres" required>
+                    <input 
+                        type="password" 
+                        id="register-password" 
+                        name="password1" 
+                        class="form-control" 
+                        placeholder="Mínimo 8 caracteres" 
+                        required
+                        autocomplete="new-password"
+                        aria-required="true"
+                        aria-describedby="password-help password-error">
+                    <small id="password-help" style="display: block; margin-top: 5px; font-size: 11px; color: #64748b;">
+                        Mínimo 8 caracteres
+                    </small>
                     {% if form.password1.errors %}
-                    <small class="error">{{ form.password1.errors.0 }}</small>
+                        <span class="error" id="password-error" role="alert">
+                            {% for error in form.password1.errors %}{{ error }}{% endfor %}
+                        </span>
                     {% endif %}
                 </div>
-                
+
                 <div class="form-group">
-                    <label for="id_password2">
-                        <i class="fas fa-lock"></i>
-                        Confirmar contraseña:
+                    <label for="register-confirm-password">
+                        <i class="fas fa-check-circle" aria-hidden="true"></i>
+                        <span>Confirmar contraseña</span>
                     </label>
-                    <input type="password" name="password2" id="id_password2" class="form-control" 
-                           placeholder="Repite tu contraseña" required>
+                    <input 
+                        type="password" 
+                        id="register-confirm-password" 
+                        name="password2" 
+                        class="form-control" 
+                        placeholder="Repite tu contraseña" 
+                        required
+                        autocomplete="new-password"
+                        aria-required="true"
+                        aria-describedby="password2-error">
                     {% if form.password2.errors %}
-                    <small class="error">{{ form.password2.errors.0 }}</small>
+                        <span class="error" id="password2-error" role="alert">
+                            {% for error in form.password2.errors %}{{ error }}{% endfor %}
+                        </span>
                     {% endif %}
                 </div>
-                
-                <div class="terms">
-                    <input type="checkbox" id="terms" required>
-                    <label for="terms">Acepto los <a href="#">Términos y Condiciones</a> y la <a href="#">Política de Privacidad</a></label>
-                </div>
-                
-                <button type="submit" class="btn-login" style="margin-top: 20px;">
-                    <i class="fas fa-user-plus"></i>
-                    Crear cuenta
-                </button>
-                
-                <div class="login-footer">
-                    <p>¿Ya tienes una cuenta? <a href="{% url 'account_login' %}">Inicia sesión aquí</a></p>
-                </div>
+
+                <button type="submit" class="btn-login">Crear cuenta</button>
             </form>
-        </div>
+
+            <footer class="login-footer">
+                <p>
+                    ¿Ya tienes una cuenta?<br>
+                    <a href="{% url 'account_login' %}" class="btn-register-link">Inicia sesión aquí</a>
+                </p>
+            </footer>
+        </main>
     </div>
 </body>
 </html>

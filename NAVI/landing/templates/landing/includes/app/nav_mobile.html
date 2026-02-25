@@ -1,0 +1,43 @@
+<!-- ============================================
+     BOTTOM NAVIGATION - MOBILE/TABLET (< 1024px)
+     ============================================ -->
+<nav v-if="currentMode === 'tutor'" class="lg:hidden fixed bottom-0 left-0 right-0 bg-white shadow-md border-t border-gray-200 z-50">
+    <div class="flex justify-around items-center py-2 md:py-3 px-2 md:px-4">
+        <a href="#" @click.prevent="changeSection('navi')" 
+           class="bottom-nav-link flex flex-col items-center gap-1 px-2 md:px-3 py-2 rounded-lg min-w-fit text-center"
+           :class="{active: currentSection === 'navi'}">
+            <i class="fas fa-home text-xl md:text-2xl"></i>
+            <span class="text-xs font-medium">Inicio</span>
+        </a>
+        <a href="#" @click.prevent="changeSection('juegos')" 
+           class="bottom-nav-link flex flex-col items-center gap-1 px-2 md:px-3 py-2 rounded-lg min-w-fit text-center"
+           :class="{active: currentSection === 'juegos'}">
+            <i class="fas fa-gamepad text-xl md:text-2xl"></i>
+            <span class="text-xs font-medium">Juegos</span>
+        </a>
+        <a href="#" @click.prevent="changeSection('biblioteca')" 
+           class="bottom-nav-link flex flex-col items-center gap-1 px-2 md:px-3 py-2 rounded-lg min-w-fit text-center"
+           :class="{active: currentSection === 'biblioteca'}">
+            <i class="fas fa-book text-xl md:text-2xl"></i>
+            <span class="text-xs font-medium">Biblioteca</span>
+        </a>
+        <a href="#" @click.prevent="changeSection('estadisticas')" 
+           class="bottom-nav-link flex flex-col items-center gap-1 px-2 md:px-3 py-2 rounded-lg min-w-fit text-center"
+           :class="{active: currentSection === 'estadisticas'}">
+            <i class="fas fa-chart-bar text-xl md:text-2xl"></i>
+            <span class="text-xs font-medium">Stats</span>
+        </a>
+        <a href="#" @click.prevent="changeSection('configuracion')" 
+           class="bottom-nav-link flex flex-col items-center gap-1 px-2 md:px-3 py-2 rounded-lg min-w-fit text-center"
+           :class="{active: currentSection === 'configuracion'}">
+            <i class="fas fa-cog text-xl md:text-2xl"></i>
+            <span class="text-xs font-medium">Config</span>
+        </a>
+        <a href="#" @click.prevent="changeSection('perfil')" 
+           class="bottom-nav-link flex flex-col items-center gap-1 px-2 md:px-3 py-2 rounded-lg min-w-fit text-center"
+           :class="{active: currentSection === 'perfil'}">
+            <i class="fas fa-user text-xl md:text-2xl"></i>
+            <span class="text-xs font-medium">Perfil</span>
+        </a>
+    </div>
+</nav>

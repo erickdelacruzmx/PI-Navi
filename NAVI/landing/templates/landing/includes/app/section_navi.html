@@ -1,0 +1,35 @@
+<!-- ============================================
+    SECCIÓN DEDICADA NAVI - Vista principal
+    ============================================ -->
+<div v-if="currentSection === 'navi'" 
+     class="w-full flex flex-col items-center justify-center bg-gradient-to-b from-gray-50 to-white gap-1 sm:gap-2 md:gap-3 lg:gap-4 overflow-hidden transition-all duration-500 navi-hero"
+     :class="currentMode === 'tutor' ? 'navi-hero--tutor' : 'navi-hero--full'">
+
+    <!-- Switch siempre visible arriba -->
+    <div class="mt-1 sm:mt-1 md:mt-2">
+        <div class="mode-switch">
+            <button class="mode-btn" :class="{active: currentMode === 'tutor'}" @click="currentMode = 'tutor'">
+                Tutor
+            </button>
+            <button class="mode-btn" :class="{active: currentMode === 'navicito'}" @click="currentMode = 'navicito'">
+                Navicito
+            </button>
+        </div>
+    </div>
+
+    <!-- Avatar NAVI -->
+    <div class="navi-circle navi-hero-shadow" 
+         :class="{'talking': isTalking}"
+         @click="handleNaviClick"
+         @keydown.enter.prevent="handleNaviClick"
+         @keydown.space.prevent="handleNaviClick"
+         role="button"
+         tabindex="0"
+         aria-label="Activar interacción con Navi">
+    </div>
+
+    <!-- Texto descriptivo -->
+    <p class="text-gray-600 text-center text-xs sm:text-sm md:text-base lg:text-base xl:text-lg 2xl:text-xl max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-2xl 2xl:max-w-3xl px-3 sm:px-4 md:px-5 lg:px-6 2xl:px-8 leading-relaxed mb-1 sm:mb-1 md:mb-2 transition-all duration-500 fade-in-text">
+        [[ naviMessage ]]
+    </p>
+</div>

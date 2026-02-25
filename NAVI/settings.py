@@ -35,7 +35,7 @@ INSTALLED_APPS = [
     'django.contrib.sites',
     
     # Mis apps
-    'landing.apps.LandingConfig',
+    'NAVI.landing.apps.LandingConfig',
     
     # Allauth
     'allauth',
@@ -78,23 +78,32 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'NAVI.wsgi.application'
 
-# Database - PostgreSQL
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('DB_NAME', 'navi'),
-        'USER': os.getenv('DB_USER', 'postgres'),
-        'PASSWORD': os.getenv('DB_PASSWORD', 'cisco'),
-        'HOST': os.getenv('DB_HOST', 'localhost'),
-        'PORT': os.getenv('DB_PORT', '5432'),
-        'CONN_MAX_AGE': int(os.getenv('DB_CONN_MAX_AGE', '60')),
-    }
-}
+USE_SQLITE = os.getenv('USE_SQLITE', 'False').lower() in ('1', 'true', 'yes', 'on')
 
-if os.getenv('DB_SSLMODE'):
-    DATABASES['default']['OPTIONS'] = {
-        'sslmode': os.getenv('DB_SSLMODE')
+if USE_SQLITE:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
     }
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': os.getenv('DB_NAME', 'navi'),
+            'USER': os.getenv('DB_USER', 'postgres'),
+            'PASSWORD': os.getenv('DB_PASSWORD', 'cisco'),
+            'HOST': os.getenv('DB_HOST', 'localhost'),
+            'PORT': os.getenv('DB_PORT', '5432'),
+            'CONN_MAX_AGE': int(os.getenv('DB_CONN_MAX_AGE', '60')),
+        }
+    }
+
+    if os.getenv('DB_SSLMODE'):
+        DATABASES['default']['OPTIONS'] = {
+            'sslmode': os.getenv('DB_SSLMODE')
+        }
 
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
@@ -114,15 +123,12 @@ AUTHENTICATION_BACKENDS = [
 # Configuración de allauth
 ACCOUNT_LOGIN_METHODS = {'email'}
 ACCOUNT_SIGNUP_FIELDS = ['email*', 'password1*', 'password2*']
-ACCOUNT_AUTHENTICATION_METHOD = 'email'
-ACCOUNT_EMAIL_REQUIRED = True
-ACCOUNT_USERNAME_REQUIRED = False
 ACCOUNT_UNIQUE_EMAIL = True
 ACCOUNT_EMAIL_VERIFICATION = 'none'
 ACCOUNT_LOGOUT_ON_GET = True
 ACCOUNT_SESSION_REMEMBER = True
 
-LOGIN_REDIRECT_URL = '/'
+LOGIN_REDIRECT_URL = 'landing:app'
 LOGOUT_REDIRECT_URL = '/'
 
 LANGUAGE_CODE = 'es-mx'
@@ -145,5 +151,5 @@ if DEBUG:
 
 # Custom forms
 ACCOUNT_FORMS = {
-    'signup': 'landing.forms.CustomSignupForm',
+    'signup': 'NAVI.landing.forms.CustomSignupForm',
 }

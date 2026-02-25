@@ -1,0 +1,46 @@
+{% load static %}
+<!-- ============================================
+    DESKTOP NAVIGATION - TOP BAR (>= 1024px)
+    ============================================ -->
+<nav v-if="currentMode === 'tutor'" class="hidden lg:flex items-center justify-between px-6 xl:px-10 2xl:px-12 py-3 xl:py-4 bg-white shadow-md sticky top-0 z-50">
+    <!-- Logo y Links -->
+    <div class="flex items-center gap-2 xl:gap-4 2xl:gap-6">
+        <a href="#" @click.prevent="changeSection('navi')" class="group flex-shrink-0">
+            <div class="w-14 xl:w-16 2xl:w-18 h-14 xl:h-16 2xl:h-18 rounded-full flex items-center justify-center transition-all">
+                <img src="{% static "images/logo.png" %}" alt="Logo" class="w-11 xl:w-13 2xl:w-14 h-11 xl:h-13 2xl:h-14 object-contain">
+            </div>
+        </a>
+        <div class="flex gap-1 xl:gap-2 2xl:gap-3">
+            <a href="#" @click.prevent="changeSection('navi')" 
+               class="desktop-nav-link px-3 xl:px-4 2xl:px-5 py-2 xl:py-2.5 text-sm xl:text-base 2xl:text-lg whitespace-nowrap" :class="{active: currentSection === 'navi'}">
+                <i class="fas fa-home mr-1.5 xl:mr-2"></i>Inicio
+            </a>
+            <a href="#" @click.prevent="changeSection('juegos')" 
+               class="desktop-nav-link px-3 xl:px-4 2xl:px-5 py-2 xl:py-2.5 text-sm xl:text-base 2xl:text-lg whitespace-nowrap" :class="{active: currentSection === 'juegos'}">
+                <i class="fas fa-gamepad mr-1.5 xl:mr-2"></i>Juegos
+            </a>
+            <a href="#" @click.prevent="changeSection('biblioteca')" 
+               class="desktop-nav-link px-3 xl:px-4 2xl:px-5 py-2 xl:py-2.5 text-sm xl:text-base 2xl:text-lg whitespace-nowrap" :class="{active: currentSection === 'biblioteca'}">
+                <i class="fas fa-book mr-1.5 xl:mr-2"></i>Biblioteca
+            </a>
+                <a href="#" @click.prevent="changeSection('estadisticas')" 
+                    class="desktop-nav-link px-3 xl:px-4 2xl:px-5 py-2 xl:py-2.5 text-sm xl:text-base 2xl:text-lg whitespace-nowrap" :class="{active: currentSection === 'estadisticas'}">
+                     <i class="fas fa-chart-bar mr-1.5 xl:mr-2"></i>Estadísticas
+            </a>
+            <a href="#" @click.prevent="changeSection('configuracion')" 
+               class="desktop-nav-link px-3 xl:px-4 2xl:px-5 py-2 xl:py-2.5 text-sm xl:text-base 2xl:text-lg whitespace-nowrap" :class="{active: currentSection === 'configuracion'}">
+                <i class="fas fa-cog mr-1.5 xl:mr-2"></i>Config
+            </a>
+            <a href="#" @click.prevent="changeSection('perfil')" 
+               class="desktop-nav-link px-3 xl:px-4 2xl:px-5 py-2 xl:py-2.5 text-sm xl:text-base 2xl:text-lg whitespace-nowrap" :class="{active: currentSection === 'perfil'}">
+                <i class="fas fa-user mr-1.5 xl:mr-2"></i>Perfil
+            </a>
+        </div>
+    </div>
+
+    <!-- User Actions (sin switch) -->
+    <div class="flex items-center gap-3 xl:gap-4 2xl:gap-5">
+        <span class="text-xs xl:text-sm 2xl:text-base text-gray-600 whitespace-nowrap">Hola, <strong>{{ perfil_data.nombres|default:request.user.first_name|default:request.user.username }} {{ perfil_data.apellidos|default:request.user.last_name }}</strong></span>
+        <a href="{% url 'account_logout' %}" class="text-orange-500 hover:text-orange-600 transition-colors text-xs xl:text-sm 2xl:text-base whitespace-nowrap"><i class="fas fa-sign-out-alt mr-1"></i>Salir</a>
+    </div>
+</nav>

@@ -1,0 +1,89 @@
+<!-- SECCIÓN: JUEGOS -->
+<div v-if="currentMode === 'tutor' && currentSection === 'juegos'" class="feature-section p-6 lg:p-8 2xl:p-10">
+    <div class="section-header">
+        <span class="section-kicker"><i class="fas fa-gamepad"></i>Juegos</span>
+        <h2 class="text-2xl lg:text-3xl 2xl:text-4xl font-bold text-navi-blue">¡Vamos a jugar!</h2>
+        <p class="section-subtitle text-sm lg:text-base 2xl:text-lg">
+            Selecciona una habilidad y abre actividades con una interfaz más clara, táctil y fácil de recorrer.
+        </p>
+    </div>
+
+    <div class="modern-grid">
+        <!-- CATEGORÍA: Habilidad Comunicativa -->
+        <div class="category-card modern-card card-bg-purple a11y-card rounded-2xl p-6 lg:p-7 2xl:p-8 categoria-comunicativa cursor-pointer flex flex-col" 
+            @click="openCategoryModal('habilidadComunicativa')"
+            @keydown.enter.prevent="openCategoryModal('habilidadComunicativa')"
+            @keydown.space.prevent="openCategoryModal('habilidadComunicativa')"
+            role="button"
+            tabindex="0"
+            aria-label="Abrir categoría Habilidad Comunicativa">
+            <div class="flex-1 flex flex-col items-center justify-center text-center">
+                <div class="category-icon-mask icon-comunicativa mb-4 lg:mb-5 2xl:mb-6"></div>
+                <h3 class="text-base lg:text-lg 2xl:text-xl font-bold text-navi-blue mb-2 lg:mb-3 2xl:mb-3">Habilidad Comunicativa</h3>
+                <p class="text-sm lg:text-sm 2xl:text-base text-gray-600">
+                    Mejora tu expresión y comprensión
+                </p>
+            </div>
+            <div class="flex justify-end mt-4 lg:mt-5 2xl:mt-6">
+                <span class="modern-card-arrow"><i class="fas fa-arrow-right text-sm"></i></span>
+            </div>
+        </div>
+
+        <!-- CATEGORÍA: Exploración Auditiva -->
+        <div class="category-card modern-card card-bg-pink a11y-card rounded-2xl p-6 lg:p-7 2xl:p-8 categoria-auditiva cursor-pointer flex flex-col" 
+            @click="openCategoryModal('exploracionAuditiva')"
+            @keydown.enter.prevent="openCategoryModal('exploracionAuditiva')"
+            @keydown.space.prevent="openCategoryModal('exploracionAuditiva')"
+            role="button"
+            tabindex="0"
+            aria-label="Abrir categoría Exploración Auditiva">
+            <div class="flex-1 flex flex-col items-center justify-center text-center">
+                <div class="category-icon-mask icon-auditiva mb-4 lg:mb-5 2xl:mb-6"></div>
+                <h3 class="text-base lg:text-lg 2xl:text-xl font-bold text-navi-blue mb-2 lg:mb-3 2xl:mb-3">Exploración Auditiva</h3>
+                <p class="text-sm lg:text-sm 2xl:text-base text-gray-600">
+                    Reconoce y discrimina sonidos
+                </p>
+            </div>
+            <div class="flex justify-end mt-4 lg:mt-5 2xl:mt-6">
+                <span class="modern-card-arrow"><i class="fas fa-arrow-right text-sm"></i></span>
+            </div>
+        </div>
+
+        <!-- CATEGORÍA: Desarrollo Motor -->
+        <div class="category-card modern-card card-bg-yellow a11y-card rounded-2xl p-6 lg:p-7 2xl:p-8 categoria-motor cursor-pointer flex flex-col" 
+            @click="openCategoryModal('desarrolloMotor')"
+            @keydown.enter.prevent="openCategoryModal('desarrolloMotor')"
+            @keydown.space.prevent="openCategoryModal('desarrolloMotor')"
+            role="button"
+            tabindex="0"
+            aria-label="Abrir categoría Desarrollo Motor">
+            <div class="flex-1 flex flex-col items-center justify-center text-center">
+                <div class="category-icon-mask icon-motor mb-4 lg:mb-5 2xl:mb-6"></div>
+                <h3 class="text-base lg:text-lg 2xl:text-xl font-bold text-navi-blue mb-2 lg:mb-3 2xl:mb-3">Desarrollo Motor</h3>
+                <p class="text-sm lg:text-sm 2xl:text-base text-gray-600">Mejora tu orientación espacial</p>
+            </div>
+            <div class="flex justify-end mt-4 lg:mt-5 2xl:mt-6">
+                <span class="modern-card-arrow"><i class="fas fa-arrow-right text-sm"></i></span>
+            </div>
+        </div>
+
+        <!-- CATEGORÍA: Habilidades Socioemocionales -->
+        <div class="category-card modern-card card-bg-green a11y-card rounded-2xl p-6 lg:p-7 2xl:p-8 categoria-socioemocional cursor-pointer flex flex-col" 
+            @click="openCategoryModal('habilidadesSocioemocionales')"
+            @keydown.enter.prevent="openCategoryModal('habilidadesSocioemocionales')"
+            @keydown.space.prevent="openCategoryModal('habilidadesSocioemocionales')"
+            role="button"
+            tabindex="0"
+            aria-label="Abrir categoría Habilidades Socioemocionales">
+            <div class="flex-1 flex flex-col items-center justify-center text-center">
+                <div class="category-icon-mask icon-socioemocional mb-4 lg:mb-5 2xl:mb-6"></div>
+                <h3 class="text-base lg:text-lg 2xl:text-xl font-bold text-navi-blue mb-2 lg:mb-3 2xl:mb-3">Habilidades Socioemocionales</h3>
+                <p class="text-sm lg:text-sm 2xl:text-base text-gray-600">Desarrolla empatía y habilidades sociales</p>
+            </div>
+            <div class="flex justify-end mt-4 lg:mt-5 2xl:mt-6">
+                <span class="modern-card-arrow"><i class="fas fa-arrow-right text-sm"></i></span>
+            </div>
+        </div>
+
+    </div>
+</div>

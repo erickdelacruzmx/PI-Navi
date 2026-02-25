@@ -4,63 +4,114 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Iniciar Sesión - Navi</title>
+    <meta name="description" content="Inicia sesión en Navi para acceder a tu cuenta">
+    <title>Iniciar Sesión | Navi</title>
+    <script>
+        (function () {
+            const preference = localStorage.getItem('navi-theme-preference') || 'light';
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const shouldUseDark = preference === 'dark' || (preference === 'system' && prefersDark);
+            if (shouldUseDark) {
+                document.documentElement.classList.add('theme-dark');
+                document.body && document.body.classList.add('theme-dark');
+            }
+        })();
+    </script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="{% static 'css/login.css' %}">
 </head>
 <body class="login-body">
+    <a href="{% url 'landing:index' %}" class="btn-back-home" aria-label="Volver a la página principal">
+        <i class="fas fa-arrow-left" aria-hidden="true"></i>
+        <span>Volver</span>
+    </a>
+
     <div class="login-container">
-        <div class="login-box">
-            <!-- Botón de regreso al inicio -->
-            <div class="back-to-home">
-                <a href="{% url 'landing:index' %}" class="btn-back-home">
-                    <i class="fas fa-arrow-left"></i> Volver al inicio
-                </a>
-            </div>
-            
-            <div class="login-header">
-                <img src="{% static 'images/logo.png' %}" alt="Navi Logo" class="login-logo">
-                <h2>Iniciar Sesión</h2>
-                <p>Ingresa a tu cuenta para continuar</p>
-            </div>
-            
-            <form method="post" action="{% url 'account_login' %}">
+        <main class="login-box" role="main">
+            <header class="login-header">
+                <h1>Iniciar Sesión</h1>
+                <p>Bienvenido de nuevo a Navi</p>
+            </header>
+
+            {% if form.non_field_errors %}
+                {% for error in form.non_field_errors %}
+                    <div class="alert alert-error" role="alert">
+                        <i class="fas fa-exclamation-circle" aria-hidden="true"></i>
+                        <span>{{ error }}</span>
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            <form method="post" action="{% url 'account_login' %}" novalidate>
                 {% csrf_token %}
                 
-                {% if form.non_field_errors %}
-                <div class="alert alert-error">
-                    {% for error in form.non_field_errors %}
-                        {{ error }}
-                    {% endfor %}
-                </div>
-                {% endif %}
-                
                 <div class="form-group">
-                    <label for="id_login">Correo electrónico:</label>
-                    <input type="email" name="login" id="id_login" class="form-control" 
-                           placeholder="ejemplo@correo.com" value="{{ form.login.value|default:'' }}" required>
+                    <label for="login-email">
+                        <i class="fas fa-envelope" aria-hidden="true"></i>
+                        <span>Correo electrónico</span>
+                    </label>
+                    <input 
+                        type="email" 
+                        id="login-email" 
+                        name="login" 
+                        class="form-control" 
+                        placeholder="tu@email.com" 
+                        required 
+                        autocomplete="email"
+                        aria-required="true"
+                        aria-describedby="email-error"
+                        value="{{ form.login.value|default:'' }}">
+                    {% if form.login.errors %}
+                        <span class="error" id="email-error" role="alert">
+                            {% for error in form.login.errors %}{{ error }}{% endfor %}
+                        </span>
+                    {% endif %}
                 </div>
-                
+
                 <div class="form-group">
-                    <label for="id_password">Contraseña:</label>
-                    <input type="password" name="password" id="id_password" class="form-control" 
-                           placeholder="••••••••" required>
+                    <label for="login-password">
+                        <i class="fas fa-lock" aria-hidden="true"></i>
+                        <span>Contraseña</span>
+                    </label>
+                    <input 
+                        type="password" 
+                        id="login-password" 
+                        name="password" 
+                        class="form-control" 
+                        placeholder="Ingresa tu contraseña" 
+                        required
+                        autocomplete="current-password"
+                        aria-required="true"
+                        aria-describedby="password-error">
+                    {% if form.password.errors %}
+                        <span class="error" id="password-error" role="alert">
+                            {% for error in form.password.errors %}{{ error }}{% endfor %}
+                        </span>
+                    {% endif %}
+                    <a href="{% url 'account_reset_password' %}" class="forgot-password">
+                        ¿Olvidaste tu contraseña?
+                    </a>
                 </div>
-                
+
                 <div class="form-group remember-me">
-                    <input type="checkbox" name="remember" id="id_remember" {% if form.remember.value %}checked{% endif %}>
-                    <label for="id_remember">Recordarme</label>
+                    <input 
+                        type="checkbox" 
+                        name="remember" 
+                        id="id_remember" 
+                        {% if form.remember.value %}checked{% endif %}>
+                    <label for="id_remember">Mantener sesión iniciada</label>
                 </div>
-                
-                <button type="submit" class="btn-login">Iniciar Sesión</button>
-                
-                <div class="login-footer">
-                    <!-- Botón de registro con estilo -->
-                    <p>¿No tienes cuenta? <a href="{% url 'account_signup' %}" class="btn-register-link">Regístrate aquí</a></p>
-                    <p><a href="{% url 'account_reset_password' %}" class="forgot-password">¿Olvidaste tu contraseña?</a></p>
-                </div>
+
+                <button type="submit" class="btn-login">Ingresar</button>
             </form>
-        </div>
+
+            <footer class="login-footer">
+                <p>
+                    ¿No tienes una cuenta?<br>
+                    <a href="{% url 'account_signup' %}" class="btn-register-link">Regístrate aquí</a>
+                </p>
+            </footer>
+        </main>
     </div>
 </body>
 </html>

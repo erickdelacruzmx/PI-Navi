@@ -1,0 +1,281 @@
+<!-- ============================================
+     MODAL DE JUEGO
+     ============================================ -->
+<div v-if="showModal" @click="closeGameModal" 
+     class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 modal-z-top">
+    <div @click.stop class="bg-white rounded-2xl p-6 lg:p-8 2xl:p-10 max-w-sm lg:max-w-2xl 2xl:max-w-3xl w-full shadow-2xl">
+        <h3 class="text-2xl lg:text-3xl 2xl:text-4xl font-bold text-navi-blue mb-3 lg:mb-4 2xl:mb-6">[[ selectedGame ]]</h3>
+        <p class="text-gray-600 text-base lg:text-lg 2xl:text-xl mb-6 lg:mb-8 2xl:mb-10 leading-relaxed">[[ gameDescription ]]</p>
+        <button @click="closeGameModal" 
+                class="w-full bg-navi-blue text-white py-3 lg:py-4 2xl:py-5 px-6 lg:px-8 2xl:px-10 rounded-lg text-base lg:text-lg 2xl:text-xl font-semibold hover:bg-blue-700 transition-all active:scale-95">
+            Comenzar [[ selectedGame ]]
+        </button>
+    </div>
+</div>
+
+<!-- MODAL DE ESTADÍSTICAS -->
+<div v-if="showStatsModal" @click="closeStatsModal" class="modal-overlay" role="dialog" aria-modal="true" aria-label="Modal de estadísticas">
+    <div @click.stop class="modal-shell stats-modal-shell">
+        <div class="stats-modal-header">
+            <button @click="closeStatsModal" class="stats-back-btn" aria-label="Volver a la sección de estadísticas">
+                <i class="fas fa-arrow-left"></i>
+            </button>
+            <div class="stats-modal-heading">
+                <h3 class="modal-title text-xl lg:text-2xl">[[ getStatsModalTitle() ]]</h3>
+                <p class="modal-description">[[ getStatsModalSubtitle() ]]</p>
+            </div>
+            <select v-model="statsPeriod" class="setting-select stats-period-select" aria-label="Filtrar período de estadísticas">
+                <option>Diario</option>
+                <option>Semanal</option>
+                <option>Mensual</option>
+            </select>
+        </div>
+
+        <div class="modal-body stats-modal-body" v-if="currentStatsView === 'estadisticas'">
+            <div class="stat-card mb-4">
+                <span class="stats-card-period">Datos: [[ statsPeriod ]]</span>
+                <div class="stats-block-head">
+                    <div>
+                        <h3 class="stats-block-title">Habilidades estimuladas</h3>
+                        <p class="stats-block-subtitle">¡Mira las estadísticas!</p>
+                    </div>
+                </div>
+                <div class="stats-skill-list">
+                    <div class="stats-skill-row" v-for="item in stimulatedSkills" :key="item.key">
+                        <div class="stats-skill-top">
+                            <p class="stats-skill-name">[[ item.label ]]</p>
+                            <p class="stats-skill-value">[[ item.percentage ]]%</p>
+                        </div>
+                        <div class="progress-track stats-skill-track">
+                            <div class="progress-fill" :class="item.fillClass" :style="{ width: item.percentage + '%' }"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stats-insights-grid">
+                <article class="stat-card stats-insight-card">
+                    <span class="stats-card-period">[[ statsPeriod ]]</span>
+                    <p class="stats-insight-title">Progreso</p>
+                    <p class="stats-big-number">+[[ overallProgress ]]%</p>
+                </article>
+                <article class="stat-card stats-insight-card">
+                    <span class="stats-card-period">[[ statsPeriod ]]</span>
+                    <p class="stats-insight-title">Actividades completadas</p>
+                    <p class="stats-big-number">[[ completedActivitiesCount ]]/[[ totalActivitiesCount ]]</p>
+                </article>
+            </div>
+        </div>
+
+        <div class="modal-body stats-modal-body" v-else-if="currentStatsView === 'tiempo'">
+            <div class="stats-time-main">
+                <span class="stats-card-period">Datos: [[ statsPeriod ]]</span>
+                <p class="stats-time-hours">[[ estimatedUsageHours ]] hrs</p>
+                <p class="stats-time-label">tiempo de uso</p>
+            </div>
+
+            <div class="stat-card mt-4">
+                <span class="stats-card-period">[[ statsPeriod ]]</span>
+                <h4 class="stats-block-title mb-3">Porcentaje de uso</h4>
+                <div class="stats-skill-row">
+                    <div class="stats-skill-top">
+                        <p class="stats-skill-name"><i class="fas fa-gamepad mr-2"></i>Juegos</p>
+                        <p class="stats-skill-value">[[ usageBreakdown.juegos ]]%</p>
+                    </div>
+                    <div class="progress-track stats-skill-track">
+                        <div class="progress-fill progress-fill--purple" :style="{ width: usageBreakdown.juegos + '%' }"></div>
+                    </div>
+                </div>
+                <div class="stats-skill-row mt-3">
+                    <div class="stats-skill-top">
+                        <p class="stats-skill-name"><i class="fas fa-book mr-2"></i>Biblioteca</p>
+                        <p class="stats-skill-value">[[ usageBreakdown.biblioteca ]]%</p>
+                    </div>
+                    <div class="progress-track stats-skill-track">
+                        <div class="progress-fill progress-fill--pink" :style="{ width: usageBreakdown.biblioteca + '%' }"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stat-card mt-4">
+                <span class="stats-card-period">[[ statsPeriod ]]</span>
+                <p class="stats-insight-title">Actividad</p>
+                <p class="stats-insight-text">
+                    <span class="sm:hidden">Favorito: <strong>[[ strongestSkill.label ]]</strong></span>
+                    <span class="hidden sm:inline">Su pasatiempo favorito de (Navicito) ha sido: <strong>[[ strongestSkill.label ]]</strong></span>
+                </p>
+            </div>
+        </div>
+
+        <div class="modal-body stats-modal-body" v-else-if="currentStatsView === 'fortalezas'">
+            <h4 class="stats-block-title mb-4">Habilidades destacadas</h4>
+            <div class="stats-focus-list">
+                <article class="stat-card stats-focus-item" v-for="item in topStrengths" :key="item.key">
+                    <div>
+                        <span class="stats-card-period">[[ statsPeriod ]]</span>
+                        <p class="stats-insight-title">[[ item.label ]]</p>
+                        <p class="stats-insight-text">[[ item.description ]]</p>
+                    </div>
+                    <div class="stats-ring" :style="{ background: 'conic-gradient(#4f46e5 ' + (item.percentage * 3.6) + 'deg, #dbeafe 0deg)' }">
+                        <span>[[ item.percentage ]]%</span>
+                    </div>
+                </article>
+            </div>
+            <article class="stat-card mt-4">
+                <span class="stats-card-period">[[ statsPeriod ]]</span>
+                <p class="stats-insight-title"><i class="far fa-play-circle mr-2"></i>Recomendación</p>
+                <p class="stats-insight-text">
+                    <span class="sm:hidden">Sigue reforzando [[ topStrengths[0].label ]].</span>
+                    <span class="hidden sm:inline">Increíble! Continúa con juegos que refuercen [[ topStrengths[0].label ]] para potenciar aún más esta habilidad.</span>
+                </p>
+            </article>
+        </div>
+
+        <div class="modal-body stats-modal-body" v-else-if="currentStatsView === 'debilidades'">
+            <h4 class="stats-block-title mb-4">Habilidades débiles</h4>
+            <div class="stats-focus-list">
+                <article class="stat-card stats-focus-item" v-for="item in topWeaknesses" :key="item.key">
+                    <div>
+                        <span class="stats-card-period">[[ statsPeriod ]]</span>
+                        <p class="stats-insight-title">[[ item.label ]]</p>
+                        <p class="stats-insight-text">[[ item.description ]]</p>
+                    </div>
+                    <div class="stats-ring" :style="{ background: 'conic-gradient(#4f46e5 ' + (item.percentage * 3.6) + 'deg, #dbeafe 0deg)' }">
+                        <span>[[ item.percentage ]]%</span>
+                    </div>
+                </article>
+            </div>
+            <article class="stat-card mt-4">
+                <span class="stats-card-period">[[ statsPeriod ]]</span>
+                <p class="stats-insight-title"><i class="far fa-play-circle mr-2"></i>Recomendación</p>
+                <p class="stats-insight-text">
+                    <span class="sm:hidden">Refuerza en Juegos y Biblioteca.</span>
+                    <span class="hidden sm:inline">Refuerza estas habilidades con actividades en Juegos y Biblioteca, y consulta los avances en esta sección.</span>
+                </p>
+            </article>
+        </div>
+
+        <div class="modal-body stats-modal-body" v-else-if="currentStatsView === 'historial'">
+            <article class="stat-card stats-trophy-card mb-4">
+                <div>
+                    <span class="stats-card-period">[[ statsPeriod ]]</span>
+                    <p class="stats-insight-title">¡2do nivel completado!</p>
+                    <p class="stats-insight-text">[[ completedActivitiesCount ]]/[[ totalActivitiesCount ]] actividades completadas</p>
+                </div>
+                <i class="fas fa-trophy"></i>
+            </article>
+
+            <h4 class="stats-block-title mb-3">Resultados recientes</h4>
+            <div class="stats-history-cards">
+                <article class="stat-card stats-result-item" v-for="result in historyResults" :key="result.id">
+                    <span class="stats-card-period">[[ statsPeriod ]]</span>
+                    <div class="stats-level-pill">[[ result.level ]]</div>
+                    <div class="stats-result-content">
+                        <p class="stats-insight-title">[[ result.title ]]</p>
+                        <div class="progress-track stats-result-track">
+                            <div class="progress-fill" :class="result.fillClass" :style="{ width: result.percentage + '%' }"></div>
+                        </div>
+                    </div>
+                    <p class="stats-result-score">[[ result.score ]]</p>
+                </article>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ============================================
+     MODAL DE CATEGORÍA
+     ============================================ -->
+<div v-if="showCategoryModal" @click="closeCategoryModal" class="modal-overlay" role="dialog" aria-modal="true" aria-label="Modal de categoría de juegos">
+    <div @click.stop class="modal-shell" :class="getCategoryModalClass()">
+        <!-- Header del Modal -->
+        <div class="modal-header">
+            <div class="flex items-center gap-3 lg:gap-4">
+                <div class="category-icon-mask text-2xl lg:text-3xl" :class="getCategoryIcon()"></div>
+                <div>
+                    <h3 class="modal-title text-xl lg:text-2xl">[[ getCategoryTitle() ]]</h3>
+                    <p class="modal-description">[[ getCategoryDescription() ]]</p>
+                </div>
+            </div>
+            <button @click="closeCategoryModal" class="modal-close-btn" aria-label="Cerrar modal de categoría">
+                <i class="fas fa-times text-lg"></i>
+            </button>
+        </div>
+
+        <!-- Lista de Actividades -->
+        <div class="modal-body">
+            <div class="modal-grid">
+                <template v-for="(item, index) in getCategoryGames()" :key="index">
+                    <div v-if="item.content"
+                        class="modal-item-card cursor-pointer group active:scale-95 a11y-card"
+                        @click="openGameModal(item.content, getCategoryGameDescription())"
+                        @keydown.enter.prevent="openGameModal(item.content, getCategoryGameDescription())"
+                        @keydown.space.prevent="openGameModal(item.content, getCategoryGameDescription())"
+                        role="button"
+                        tabindex="0"
+                        :aria-label="'Abrir juego ' + item.content">
+                        <div class="modal-item-content">
+                            <div class="modal-item-top">
+                                <div class="item-icon-mask modal-item-icon" :class="getIconClass(item)"></div>
+                                <span class="modal-item-title">[[ item.content ]]</span>
+                                <p class="modal-item-subtitle">Toca para iniciar actividad</p>
+                            </div>
+                            <span class="modal-item-action modern-card-arrow"><i class="fas fa-arrow-right text-sm"></i></span>
+                        </div>
+                    </div>
+                </template>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL DE BIBLIOTECA -->
+<div v-if="showLibraryModal" @click="closeLibraryModal" class="modal-overlay" role="dialog" aria-modal="true" aria-label="Modal de biblioteca">
+    <div @click.stop class="modal-shell" :class="getLibraryModalClass()">
+        <div class="modal-header" :class="getLibraryModalClass()">
+            <div class="flex items-center gap-3 lg:gap-4">
+                <div class="category-icon-mask" :class="getLibraryIcon()"></div>
+                <div>
+                    <h3 class="modal-title text-xl lg:text-2xl">[[ getLibraryTitle() ]]</h3>
+                    <p class="modal-description">[[ getLibraryDescription() ]]</p>
+                </div>
+            </div>
+            <button @click="closeLibraryModal" class="modal-close-btn" aria-label="Cerrar modal de biblioteca">
+                <i class="fas fa-times text-lg"></i>
+            </button>
+        </div>
+
+        <!-- Lista de Contenido -->
+        <div class="modal-body">
+            <!-- Estado vacío para favoritos -->
+            <div v-if="currentLibraryCategory === 'favoritos' && getLibraryItems().length === 0" class="modal-empty-state">
+                <div class="category-icon-mask icon-favoritos mx-auto mb-3 lg:mb-6 xl:mb-8 2xl:mb-10 opacity-30"></div>
+                <p class="text-base lg:text-lg">No tienes favoritos aún.<br>Marca algunos elementos en otras categorías.</p>
+            </div>
+
+            <!-- Grid de elementos -->
+            <div v-else class="modal-grid">
+                <template v-for="(item, index) in getLibraryItems()" :key="index">
+                    <div v-if="item.content"
+                         class="modal-item-card active:scale-95">
+                        <div class="modal-item-content">
+                            <div class="modal-item-top">
+                                <div class="item-icon-mask modal-item-icon" :class="getIconClass(item)"></div>
+                                <span class="modal-item-title">[[ item.content ]]</span>
+                                <p class="modal-item-subtitle">Toca para abrir recurso</p>
+                            </div>
+                            <i :class="item.isFavorite ? 'fas fa-heart text-red-500' : 'far fa-heart text-gray-400'"
+                                class="modal-item-action cursor-pointer hover:scale-110 transition-transform text-lg min-w-[44px] min-h-[44px] flex items-center justify-center active:scale-95 a11y-icon-btn"
+                                @click="toggleFavorite(item)"
+                                @keydown.enter.prevent="toggleFavorite(item)"
+                                @keydown.space.prevent="toggleFavorite(item)"
+                                role="button"
+                                tabindex="0"
+                                :aria-label="(item.isFavorite ? 'Quitar de favoritos ' : 'Agregar a favoritos ') + item.content"></i>
+                        </div>
+                    </div>
+                </template>
+            </div>
+        </div>
+    </div>
+</div>

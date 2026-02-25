@@ -1,0 +1,76 @@
+<!-- SECCIÓN: ESTADÍSTICAS -->
+<div v-if="currentMode === 'tutor' && currentSection === 'estadisticas'" class="feature-section p-6 lg:p-8 2xl:p-10">
+    <div class="section-header">
+        <span class="section-kicker"><i class="fas fa-chart-line"></i>Estadísticas</span>
+        <h2 class="text-2xl lg:text-3xl 2xl:text-4xl font-bold text-navi-blue">Tutor</h2>
+        <p class="section-subtitle text-sm lg:text-base 2xl:text-lg">
+            <span class="sm:hidden">Sección informativa.</span>
+            <span class="hidden sm:inline">Sección informativa del navicito</span>
+        </p>
+    </div>
+
+    <div class="stats-ideas-grid mb-6 lg:mb-8">
+        <article
+            class="stats-idea-card card-lila cursor-pointer a11y-card"
+            @click="openStatsModal('estadisticas')"
+            @keydown.enter.prevent="openStatsModal('estadisticas')"
+            @keydown.space.prevent="openStatsModal('estadisticas')"
+            role="button"
+            tabindex="0"
+            aria-label="Abrir sección estadísticas">
+            <i class="fas fa-chart-bar"></i>
+            <h3>Estadísticas</h3>
+            <p>Rendimiento</p>
+        </article>
+        <article
+            class="stats-idea-card card-rosa cursor-pointer a11y-card"
+            @click="openStatsModal('tiempo')"
+            @keydown.enter.prevent="openStatsModal('tiempo')"
+            @keydown.space.prevent="openStatsModal('tiempo')"
+            role="button"
+            tabindex="0"
+            aria-label="Abrir sección tiempo de uso">
+            <i class="fas fa-stopwatch"></i>
+            <h3>Tiempo de uso</h3>
+            <p>Distribución</p>
+        </article>
+        <article
+            class="stats-idea-card card-amarilla cursor-pointer a11y-card"
+            @click="openStatsModal('fortalezas')"
+            @keydown.enter.prevent="openStatsModal('fortalezas')"
+            @keydown.space.prevent="openStatsModal('fortalezas')"
+            role="button"
+            tabindex="0"
+            aria-label="Abrir sección fortalezas">
+            <i class="far fa-smile"></i>
+            <h3>Fortalezas</h3>
+            <p>Mayor avance</p>
+        </article>
+        <article
+            class="stats-idea-card card-verde cursor-pointer a11y-card"
+            @click="openStatsModal('debilidades')"
+            @keydown.enter.prevent="openStatsModal('debilidades')"
+            @keydown.space.prevent="openStatsModal('debilidades')"
+            role="button"
+            tabindex="0"
+            aria-label="Abrir sección debilidades">
+            <i class="far fa-frown"></i>
+            <h3>Debilidades</h3>
+            <p>Menor avance</p>
+        </article>
+        <article
+            class="stats-idea-card stats-idea-card--wide card-celeste cursor-pointer a11y-card"
+            @click="openStatsModal('historial')"
+            @keydown.enter.prevent="openStatsModal('historial')"
+            @keydown.space.prevent="openStatsModal('historial')"
+            role="button"
+            tabindex="0"
+            aria-label="Abrir sección historial">
+            <div>
+                <h3>Historial</h3>
+                <p>Actividades y resultados</p>
+            </div>
+            <i class="fas fa-history"></i>
+        </article>
+    </div>
+</div>

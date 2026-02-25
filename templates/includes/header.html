@@ -1,34 +1,43 @@
 {% load static %}
-<header>
-    <div class="container header-content">
-        <div class="logo-container">
-            <img src="{% static 'images/logo.png' %}" alt="Logo de Navi">
-            <span class="logo-text">NAVI</span>
-        </div>
-        <nav>
-            <ul>
-                <li><a href="{% url 'landing:index' %}#conoce-a-navi">Conoce a NAVI</a></li>
-                <li><a href="{% url 'landing:index' %}#caracteristicas">Características</a></li>
-                <li><a href="{% url 'landing:index' %}#investigacion">Investigación</a></li>
-                <li><a href="{% url 'landing:index' %}#objetivos">Objetivos</a></li>
-                <li><a href="{% url 'landing:index' %}#galeria">Galería</a></li>
-                <li><a href="{% url 'landing:index' %}#contacto">Contacto</a></li>
+<header class="site-header">
+    <div class="container flex flex-wrap items-center gap-6 py-4">
+        <a href="{% url 'landing:index' %}" class="flex items-center">
+            <img src="{% static 'images/logo.png' %}" alt="Logo de Navi" class="h-9 w-auto">
+        </a>
+
+        <button id="nav-toggle" class="lg:hidden ml-auto inline-flex items-center justify-center rounded-xl border border-slate-200 px-3 py-2 text-slate-700 hover:bg-slate-100" aria-controls="nav-panel" aria-expanded="false" type="button">
+            <span class="sr-only">Abrir menu</span>
+            <i class="fas fa-bars"></i>
+        </button>
+
+        <div id="nav-panel" class="nav-panel hidden w-full flex-col gap-4 border-t border-slate-200 bg-white/95 pt-4 lg:flex lg:w-auto lg:flex-1 lg:flex-row lg:items-center lg:justify-between lg:border-t-0 lg:bg-transparent lg:pt-0">
+            <nav class="flex flex-col gap-2.5 lg:flex-row lg:items-center lg:gap-5">
+                <a class="nav-link" data-scroll data-section="conoce-a-navi" href="{% url 'landing:index' %}#conoce-a-navi">Conoce a NAVI</a>
+                <a class="nav-link" data-scroll data-section="caracteristicas" href="{% url 'landing:index' %}#caracteristicas">Características</a>
+                <a class="nav-link" data-scroll data-section="investigacion" href="{% url 'landing:index' %}#investigacion">Investigación</a>
+                <a class="nav-link" data-scroll data-section="objetivos" href="{% url 'landing:index' %}#objetivos">Objetivos</a>
+                <a class="nav-link" data-scroll data-section="galeria" href="{% url 'landing:index' %}#galeria">Galería</a>
+                <a class="nav-link" data-scroll data-section="contacto" href="{% url 'landing:index' %}#contacto">Contacto</a>
+            </nav>
+
+            <div class="flex flex-col gap-3 lg:flex-row lg:items-center">
+                <button id="theme-toggle-public" type="button" class="theme-toggle-public inline-flex items-center justify-center rounded-full border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:border-slate-400 hover:text-slate-900" aria-label="Alternar tema" title="Alternar tema">
+                    <i class="fas fa-moon"></i>
+                </button>
                 {% if user.is_authenticated %}
-                    <li class="user-menu">
-                        <span class="user-welcome">
-                            <i class="fas fa-user-circle"></i>
-                            Hola, {{ user.first_name|default:user.email }}
-                        </span>
-                        <a href="{% url 'account_logout' %}" class="logout-btn">
-                            <i class="fas fa-sign-out-alt"></i>
-                            Cerrar Sesión
-                        </a>
-                    </li>
+                    <div class="flex items-center gap-2 rounded-full bg-slate-100 px-3 py-2 text-sm text-slate-700">
+                        <i class="fas fa-user-circle"></i>
+                        <span>Hola, {{ user.first_name|default:user.username }} {{ user.last_name|default:'' }}</span>
+                    </div>
+                    <a href="{% url 'account_logout' %}" class="inline-flex items-center justify-center rounded-full border border-red-200 px-4 py-2 text-sm font-semibold text-red-600 transition hover:bg-red-50">
+                        <i class="fas fa-sign-out-alt mr-2"></i>
+                        Cerrar sesión
+                    </a>
                 {% else %}
-                    <li><a href="{% url 'account_login' %}" class="btn-login-nav">Iniciar Sesión</a></li>
-                    <li><a href="{% url 'account_signup' %}" class="btn-signup-nav">Registrarse</a></li>
+                    <a href="{% url 'account_login' %}" class="inline-flex items-center justify-center rounded-full border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:border-slate-400 hover:text-slate-900">Iniciar sesión</a>
+                    <a href="{% url 'account_signup' %}" class="inline-flex items-center justify-center rounded-full bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700">Registrarse</a>
                 {% endif %}
-            </ul>
-        </nav>
+            </div>
+        </div>
     </div>
 </header>
