@@ -5,6 +5,7 @@ app_name = 'landing'
 
 urlpatterns = [
     path('', views.home, name='index'),  # ¡DEBE SER 'index'!
+    path('health/', views.health_view, name='health'),
     path('app/', views.app_view, name='app'),
     path('perfil/', views.perfil_view, name='perfil'),
     path('perfil/actualizar/', views.perfil_update_view, name='perfil_actualizar'),

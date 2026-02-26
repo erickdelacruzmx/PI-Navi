@@ -126,6 +126,19 @@ Por defecto usa **SQLite** para desarrollo rápido.
 
 Para migrar a **PostgreSQL**: ver [docs/setup_base_datos.md](docs/setup_base_datos.md)
 
+## Despliegue en Producción (Nginx + Gunicorn)
+
+Se añadieron plantillas listas para instancia Linux:
+
+- `deployment/gunicorn/gunicorn.conf.py`
+- `deployment/systemd/navi.service`
+- `deployment/nginx/navi.conf`
+- `deployment/scripts/bootstrap_instance.sh`
+- `deployment/scripts/enable_ssl_certbot.sh`
+- `deployment/env/production.navicito.com.env`
+
+Guía completa: `docs/deploy_nginx_gunicorn.md`
+
 ## Migrations Aplicadas
 
 ✅ Todas las migraciones iniciales aplicadas:

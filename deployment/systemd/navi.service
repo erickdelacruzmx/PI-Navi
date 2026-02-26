@@ -1,0 +1,21 @@
+[Unit]
+Description=NAVI Django Gunicorn Service
+After=network.target
+
+[Service]
+Type=simple
+User=www-data
+Group=www-data
+WorkingDirectory=/var/www/navi/app
+EnvironmentFile=/var/www/navi/app/.env
+ExecStart=/var/www/navi/venv/bin/gunicorn NAVI.wsgi:application --config /var/www/navi/app/deployment/gunicorn/gunicorn.conf.py
+ExecReload=/bin/kill -s HUP $MAINPID
+Restart=always
+RestartSec=5
+KillSignal=SIGQUIT
+TimeoutStopSec=30
+PrivateTmp=true
+NoNewPrivileges=true
+
+[Install]
+WantedBy=multi-user.target

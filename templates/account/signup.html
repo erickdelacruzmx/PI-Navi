@@ -21,16 +21,12 @@
     <link rel="stylesheet" href="{% static 'css/login.css' %}">
 </head>
 <body class="login-body">
-    <a href="{% url 'landing:index' %}" class="btn-back-home" aria-label="Volver a la página principal">
-        <i class="fas fa-arrow-left" aria-hidden="true"></i>
-        <span>Volver</span>
-    </a>
-
     <div class="login-container">
         <main class="login-box" role="main">
             <header class="login-header">
-                <h1>Crear Cuenta</h1>
-                <p>Únete a la comunidad de Navi</p>
+                <h1>¡Bienvenido!</h1>
+                <p>Crea tu cuenta en Navi.</p>
+                <h2>Regístrate</h2>
             </header>
 
             {% if form.non_field_errors %}
@@ -46,8 +42,26 @@
                 {% csrf_token %}
                 
                 <div class="form-group">
+                    <label for="register-name">
+                        <span>Nombre</span>
+                    </label>
+                    <input
+                        type="text"
+                        id="register-name"
+                        name="first_name"
+                        class="form-control"
+                        placeholder=""
+                        autocomplete="given-name"
+                        value="{{ form.first_name.value|default:'' }}">
+                    {% if form.first_name.errors %}
+                        <span class="error" role="alert">
+                            {% for error in form.first_name.errors %}{{ error }}{% endfor %}
+                        </span>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
                     <label for="register-email">
-                        <i class="fas fa-envelope" aria-hidden="true"></i>
                         <span>Correo electrónico</span>
                     </label>
                     <input 
@@ -70,7 +84,6 @@
 
                 <div class="form-group">
                     <label for="register-password">
-                        <i class="fas fa-lock" aria-hidden="true"></i>
                         <span>Contraseña</span>
                     </label>
                     <input 
@@ -78,14 +91,11 @@
                         id="register-password" 
                         name="password1" 
                         class="form-control" 
-                        placeholder="Mínimo 8 caracteres" 
+                        placeholder="" 
                         required
                         autocomplete="new-password"
                         aria-required="true"
-                        aria-describedby="password-help password-error">
-                    <small id="password-help" style="display: block; margin-top: 5px; font-size: 11px; color: #64748b;">
-                        Mínimo 8 caracteres
-                    </small>
+                        aria-describedby="password-error">
                     {% if form.password1.errors %}
                         <span class="error" id="password-error" role="alert">
                             {% for error in form.password1.errors %}{{ error }}{% endfor %}
@@ -93,38 +103,56 @@
                     {% endif %}
                 </div>
 
-                <div class="form-group">
-                    <label for="register-confirm-password">
-                        <i class="fas fa-check-circle" aria-hidden="true"></i>
-                        <span>Confirmar contraseña</span>
-                    </label>
-                    <input 
-                        type="password" 
-                        id="register-confirm-password" 
-                        name="password2" 
-                        class="form-control" 
-                        placeholder="Repite tu contraseña" 
-                        required
-                        autocomplete="new-password"
-                        aria-required="true"
-                        aria-describedby="password2-error">
-                    {% if form.password2.errors %}
-                        <span class="error" id="password2-error" role="alert">
-                            {% for error in form.password2.errors %}{{ error }}{% endfor %}
-                        </span>
-                    {% endif %}
+                <input type="hidden" name="password2" id="register-confirm-password-hidden">
+
+                <button type="submit" class="btn-login">Registrarme</button>
+            </form>
+
+            <div class="social-auth">
+                <div class="auth-divider" role="separator" aria-label="O registrarte con Google">
+                    <span>o regístrate con</span>
                 </div>
 
-                <button type="submit" class="btn-login">Crear cuenta</button>
-            </form>
+                <div class="social-actions">
+                    {% if google_social_configured %}
+                        <a href="/accounts/google/login/?process=signup" class="social-icon-btn google" aria-label="Registrarse con Google" title="Registrarse con Google">
+                            <i class="fab fa-google" aria-hidden="true"></i>
+                        </a>
+                    {% else %}
+                        <button type="button" class="social-icon-btn google is-disabled" disabled aria-label="Google no disponible por configuración pendiente" title="Google no disponible">
+                            <i class="fab fa-google" aria-hidden="true"></i>
+                        </button>
+                    {% endif %}
+                    <button type="button" class="social-icon-btn facebook is-disabled" disabled aria-label="Facebook no disponible" title="Facebook no disponible">
+                        <i class="fab fa-facebook" aria-hidden="true"></i>
+                    </button>
+                </div>
+            </div>
 
             <footer class="login-footer">
                 <p>
-                    ¿Ya tienes una cuenta?<br>
+                    ¿Ya tienes cuenta?
                     <a href="{% url 'account_login' %}" class="btn-register-link">Inicia sesión aquí</a>
                 </p>
             </footer>
         </main>
     </div>
+
+    <script>
+        (function () {
+            const passwordInput = document.getElementById('register-password');
+            const password2Hidden = document.getElementById('register-confirm-password-hidden');
+
+            if (passwordInput && password2Hidden) {
+                const syncPassword = function () {
+                    password2Hidden.value = passwordInput.value;
+                };
+
+                passwordInput.addEventListener('input', syncPassword);
+                passwordInput.addEventListener('change', syncPassword);
+                syncPassword();
+            }
+        })();
+    </script>
 </body>
 </html>

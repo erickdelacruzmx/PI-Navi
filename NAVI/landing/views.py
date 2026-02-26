@@ -4,6 +4,7 @@ from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.db import IntegrityError, transaction
+from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.utils import timezone
@@ -52,6 +53,10 @@ def home(request):  # El nombre de la función puede ser 'home' o cualquier otro
         'user': request.user,
     }
     return render(request, 'landing/index.html', context)
+
+
+def health_view(request):
+    return JsonResponse({'status': 'ok'})
 
 
 @login_required

@@ -6,6 +6,7 @@ Este directorio concentra scripts auxiliares del proyecto para mantener limpia l
 
 - `sincronizar_usuarios.py`: ejecuta el comando Django `sincronizar_usuarios`.
 - `test_env.py`: prueba lectura de variables de entorno en rutas configuradas.
+- `../deployment/scripts/bootstrap_instance.sh`: instala dependencias, configura systemd/nginx y levanta NAVI en instancia Linux.
 
 ## Uso rápido
 

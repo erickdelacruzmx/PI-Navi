@@ -21,16 +21,12 @@
     <link rel="stylesheet" href="{% static 'css/login.css' %}">
 </head>
 <body class="login-body">
-    <a href="{% url 'landing:index' %}" class="btn-back-home" aria-label="Volver a la página principal">
-        <i class="fas fa-arrow-left" aria-hidden="true"></i>
-        <span>Volver</span>
-    </a>
-
     <div class="login-container">
         <main class="login-box" role="main">
             <header class="login-header">
-                <h1>Iniciar Sesión</h1>
-                <p>Bienvenido de nuevo a Navi</p>
+                <h1>¡Hola!</h1>
+                <p>Bienvenido a Navi.</p>
+                <h2>Iniciar Sesión</h2>
             </header>
 
             {% if form.non_field_errors %}
@@ -47,7 +43,6 @@
                 
                 <div class="form-group">
                     <label for="login-email">
-                        <i class="fas fa-envelope" aria-hidden="true"></i>
                         <span>Correo electrónico</span>
                     </label>
                     <input 
@@ -70,7 +65,6 @@
 
                 <div class="form-group">
                     <label for="login-password">
-                        <i class="fas fa-lock" aria-hidden="true"></i>
                         <span>Contraseña</span>
                     </label>
                     <input 
@@ -93,21 +87,33 @@
                     </a>
                 </div>
 
-                <div class="form-group remember-me">
-                    <input 
-                        type="checkbox" 
-                        name="remember" 
-                        id="id_remember" 
-                        {% if form.remember.value %}checked{% endif %}>
-                    <label for="id_remember">Mantener sesión iniciada</label>
-                </div>
-
                 <button type="submit" class="btn-login">Ingresar</button>
             </form>
 
+            <div class="social-auth">
+                <div class="auth-divider" role="separator" aria-label="O ingresar con Google">
+                    <span>o ingresa con</span>
+                </div>
+
+                <div class="social-actions">
+                    {% if google_social_configured %}
+                        <a href="/accounts/google/login/?process=login" class="social-icon-btn google" aria-label="Ingresar con Google" title="Ingresar con Google">
+                            <i class="fab fa-google" aria-hidden="true"></i>
+                        </a>
+                    {% else %}
+                        <button type="button" class="social-icon-btn google is-disabled" disabled aria-label="Google no disponible por configuración pendiente" title="Google no disponible">
+                            <i class="fab fa-google" aria-hidden="true"></i>
+                        </button>
+                    {% endif %}
+                    <button type="button" class="social-icon-btn facebook is-disabled" disabled aria-label="Facebook no disponible" title="Facebook no disponible">
+                        <i class="fab fa-facebook" aria-hidden="true"></i>
+                    </button>
+                </div>
+            </div>
+
             <footer class="login-footer">
                 <p>
-                    ¿No tienes una cuenta?<br>
+                    No tienes cuenta,
                     <a href="{% url 'account_signup' %}" class="btn-register-link">Regístrate aquí</a>
                 </p>
             </footer>
