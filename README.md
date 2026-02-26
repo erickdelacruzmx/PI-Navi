@@ -24,11 +24,15 @@ Copia `.env.example` a `.env` y ajusta según necesites:
 Copy-Item .env.example .env
 ```
 
-**Configuración por defecto** (SQLite, desarrollo):
+**Configuración por defecto** (PostgreSQL):
 ```env
-USE_SQLITE=True
 DEBUG=True
 SECRET_KEY=django-insecure-change-me-in-production
+DB_NAME=navi
+DB_USER=postgres
+DB_PASSWORD=tu_password
+DB_HOST=localhost
+DB_PORT=5432
 ```
 
 ### 4. Aplicar Migraciones
@@ -116,15 +120,19 @@ python manage.py collectstatic
 | Variable | Descripción | Desarrollo | Producción |
 |----------|-------------|------------|------------|
 | `DEBUG` | Modo debug | `True` | `False` |
-| `USE_SQLITE` | Usar SQLite | `True` | `False` |
 | `SECRET_KEY` | Clave secreta Django | Cualquiera | Única y segura |
 | `ALLOWED_HOSTS` | Dominios permitidos | `localhost,127.0.0.1` | Dominio real |
+| `DB_NAME` | Nombre BD PostgreSQL | `navi` | BD de producción |
+| `DB_USER` | Usuario BD | `postgres` | Usuario de producción |
+| `DB_PASSWORD` | Password BD | Local | Secreto seguro |
+| `DB_HOST` | Host de PostgreSQL | `localhost` | Endpoint real |
+| `DB_PORT` | Puerto de PostgreSQL | `5432` | Puerto real |
 
 ## Base de Datos
 
-Por defecto usa **SQLite** para desarrollo rápido.
+Usa **PostgreSQL** por configuración del proyecto.
 
-Para migrar a **PostgreSQL**: ver [docs/setup_base_datos.md](docs/setup_base_datos.md)
+Para preparar PostgreSQL en servidor: ver [docs/setup_base_datos.md](docs/setup_base_datos.md)
 
 ## Despliegue en Producción (Nginx + Gunicorn)
 

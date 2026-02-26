@@ -80,32 +80,22 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'NAVI.wsgi.application'
 
-USE_SQLITE = os.getenv('USE_SQLITE', 'False').lower() in ('1', 'true', 'yes', 'on')
-
-if USE_SQLITE:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
-        }
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.getenv('DB_NAME', 'navi'),
+        'USER': os.getenv('DB_USER', 'postgres'),
+        'PASSWORD': os.getenv('DB_PASSWORD', 'cisco'),
+        'HOST': os.getenv('DB_HOST', 'localhost'),
+        'PORT': os.getenv('DB_PORT', '5432'),
+        'CONN_MAX_AGE': int(os.getenv('DB_CONN_MAX_AGE', '60')),
     }
-else:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': os.getenv('DB_NAME', 'navi'),
-            'USER': os.getenv('DB_USER', 'postgres'),
-            'PASSWORD': os.getenv('DB_PASSWORD', 'cisco'),
-            'HOST': os.getenv('DB_HOST', 'localhost'),
-            'PORT': os.getenv('DB_PORT', '5432'),
-            'CONN_MAX_AGE': int(os.getenv('DB_CONN_MAX_AGE', '60')),
-        }
-    }
+}
 
-    if os.getenv('DB_SSLMODE'):
-        DATABASES['default']['OPTIONS'] = {
-            'sslmode': os.getenv('DB_SSLMODE')
-        }
+if os.getenv('DB_SSLMODE'):
+    DATABASES['default']['OPTIONS'] = {
+        'sslmode': os.getenv('DB_SSLMODE')
+    }
 
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},

@@ -21,9 +21,15 @@ pip install --upgrade pip
 pip install -r "$APP_ROOT/requirements.txt"
 
 cd "$APP_ROOT"
+mkdir -p "$APP_ROOT/staticfiles" "$APP_ROOT/media"
 python manage.py migrate --noinput
 python manage.py collectstatic --noinput
 python manage.py check --deploy
+sudo chown -R www-data:www-data "$APP_ROOT/staticfiles" "$APP_ROOT/media"
+sudo find "$APP_ROOT/staticfiles" -type d -exec chmod 775 {} \;
+sudo find "$APP_ROOT/staticfiles" -type f -exec chmod 664 {} \;
+sudo find "$APP_ROOT/media" -type d -exec chmod 775 {} \;
+sudo find "$APP_ROOT/media" -type f -exec chmod 664 {} \;
 
 sudo cp "$APP_ROOT/deployment/systemd/navi.service" "$SERVICE_FILE"
 sudo systemctl daemon-reload

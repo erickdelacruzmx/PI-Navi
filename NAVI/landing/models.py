@@ -28,7 +28,6 @@ class Usuario(models.Model):
 
     class Meta:
         db_table = 'usuarios'
-        managed = False
 
     def __str__(self):
         return f"{self.nombres} {self.apellidos}"
@@ -41,7 +40,6 @@ class Categoria(models.Model):
 
     class Meta:
         db_table = 'categorias'
-        managed = False
 
     def __str__(self):
         return self.nombre
@@ -57,7 +55,6 @@ class Navicito(models.Model):
 
     class Meta:
         db_table = 'navicitos'
-        managed = False
 
     def __str__(self):
         return f"{self.nombres} {self.apellidos}"
@@ -73,7 +70,6 @@ class Actividad(models.Model):
 
     class Meta:
         db_table = 'actividades'
-        managed = False
 
     def __str__(self):
         return self.titulo
@@ -88,7 +84,6 @@ class Metricas(models.Model):
 
     class Meta:
         db_table = 'metricas'
-        managed = False
 
     def __str__(self):
         return f"Métricas de {self.navicito}"
@@ -104,7 +99,6 @@ class Historial(models.Model):
 
     class Meta:
         db_table = 'historial'
-        managed = False
 
     def __str__(self):
         return f"{self.navicito} - {self.actividad}"
@@ -117,7 +111,6 @@ class Favorito(models.Model):
 
     class Meta:
         db_table = 'favoritos'
-        managed = False
         unique_together = ['navicito', 'actividad']
 
     def __str__(self):
