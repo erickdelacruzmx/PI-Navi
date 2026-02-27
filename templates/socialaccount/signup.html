@@ -1,0 +1,91 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Completa tu registro con Google en Navi">
+    <title>Completar Registro | Navi</title>
+    <script>
+        (function () {
+            const preference = localStorage.getItem('navi-theme-preference') || 'light';
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const shouldUseDark = preference === 'dark' || (preference === 'system' && prefersDark);
+            if (shouldUseDark) {
+                document.documentElement.classList.add('theme-dark');
+                document.body && document.body.classList.add('theme-dark');
+            }
+        })();
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'css/login.css' %}">
+</head>
+<body class="login-body">
+    <div class="login-container">
+        <main class="login-box" role="main">
+            <header class="login-header">
+                <h1>¡Casi listo!</h1>
+                <p>Tu cuenta de Google ya está conectada.</p>
+                <h2>Completar registro</h2>
+            </header>
+
+            {% if form.non_field_errors %}
+                {% for error in form.non_field_errors %}
+                    <div class="alert alert-error" role="alert">
+                        <i class="fas fa-exclamation-circle" aria-hidden="true"></i>
+                        <span>{{ error }}</span>
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            <form method="post" action="{% url 'socialaccount_signup' %}" novalidate>
+                {% csrf_token %}
+
+                {% for hidden in form.hidden_fields %}
+                    {{ hidden }}
+                {% endfor %}
+
+                {% for field in form.visible_fields %}
+                    <div class="form-group">
+                        <label for="{{ field.id_for_label }}">
+                            <span>{{ field.label }}</span>
+                        </label>
+                        {% if field.name == 'email' %}
+                            <div class="email-chip" role="group" aria-label="Correo de Google conectado">
+                                <span class="email-chip-icon" aria-hidden="true">
+                                    <i class="fab fa-google"></i>
+                                </span>
+                                <input
+                                    type="email"
+                                    id="{{ field.id_for_label }}"
+                                    name="{{ field.html_name }}"
+                                    class="form-control email-chip-input"
+                                    value="{{ field.value|default_if_none:'' }}"
+                                    {% if field.field.required %}required{% endif %}
+                                    readonly>
+                                <span class="email-chip-status">Conectado</span>
+                            </div>
+                        {% else %}
+                            {{ field }}
+                        {% endif %}
+                        {% if field.errors %}
+                            <span class="error" role="alert">
+                                {% for error in field.errors %}{{ error }}{% endfor %}
+                            </span>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+
+                <button type="submit" class="btn-login">Continuar con Google</button>
+            </form>
+
+            <footer class="login-footer">
+                <p>
+                    ¿Ya tienes cuenta?
+                    <a href="{% url 'account_login' %}" class="btn-register-link">Inicia sesión</a>
+                </p>
+            </footer>
+        </main>
+    </div>
+</body>
+</html>

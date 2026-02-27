@@ -8,236 +8,231 @@
 {% endblock %}
 
 {% block content %}
-<!-- Hero Section -->
 <section class="hero">
+    <div class="hero-orbs" aria-hidden="true">
+        <span class="orb orb-1"></span>
+        <span class="orb orb-2"></span>
+        <span class="orb orb-3"></span>
+    </div>
     <div class="container hero-content">
-        <h1>NAVI: Nuevas formas de aprender</h1>
-        <p>Plataforma educativa creada para que niños con discapacidad visual de 3 a 7 años: aprendan, jueguen y exploren el mundo de forma autónoma y divertida.</p>
+        <h1 class="reveal reveal-up">NAVI: Educación inclusiva para explorar, aprender y crecer</h1>
+        <p class="reveal reveal-up">Una plataforma accesible para niñas y niños con discapacidad visual, con actividades guiadas por voz, juego sensorial y acompañamiento para familias y docentes.</p>
         <div class="hero-buttons">
             {% if user.is_authenticated %}
-                <a href="#" class="btn">Ver Mi Perfil</a>
+                <a href="#" class="btn">Ir a mi perfil</a>
             {% else %}
-                <a href="#conoce-a-navi" class="btn">Más Información</a>
-                <a href="{% url 'account_login' %}" class="btn btn-secondary">Iniciar Sesión</a>
+                <a href="#conoce-a-navi" class="btn">Conocer NAVI</a>
+                <a href="{% url 'account_login' %}" class="btn btn-secondary">Iniciar sesión</a>
             {% endif %}
         </div>
     </div>
 </section>
 
-<!-- Conoce a NAVI -->
-<section id="conoce-a-navi">
+<section id="conoce-a-navi" class="edu-sound">
     <div class="container">
         <div class="section-title">
-            <h2>Conoce a NAVI</h2>
+            <h2>Educación Inclusiva a través del sonido</h2>
         </div>
-        <div class="about-content">
-            <div class="about-text">
-                <p><strong>NAVI</strong> es una plataforma educativa digital inclusiva, diseñada específicamente para promover el aprendizaje y desarrollo cognitivo de niños con discapacidad visual, entre 3 y 7 años. A través de un entorno completamente sonoro, combina actividades guiadas por voz, juegos sensoriales y contenidos adaptados para garantizar una experiencia educativa accesible y significativa.</p>
-                
-                <h3 class="about-subtitle">¿Por qué NAVI es diferente?</h3>
-                
-                <ul class="about-list">
-                    <li><strong>Entorno seguro y controlado:</strong> Espacio divertido y apropiado que convierte el aprendizaje en un juego, libre de distracciones y contenido inapropiado.</li>
-                    <li><strong>Enfoque multisensorial:</strong> Utiliza el sonido y el tacto como principales vías de exploración y descubrimiento para un aprendizaje significativo.</li>
-                    <li><strong>Ritmo personalizado:</strong> Sin prisa, sin presión. NAVI se adapta al ritmo de cada niño, garantizando que todos puedan avanzar con confianza.</li>
-                    <li><strong>Interfaz completamente audible:</strong> Navegación intuitiva diseñada específicamente para niños con discapacidad visual, sin necesidad de elementos visuales.</li>
+        <p class="section-lead">Diseñamos experiencias para que cada niño aprenda mediante escucha activa, interacción guiada y acompañamiento positivo.</p>
+        <div class="edu-grid">
+            <article class="edu-card reveal reveal-up">
+                <div class="edu-icon"><i class="fas fa-headphones"></i></div>
+                <h3>Plataforma 100% sonora</h3>
+                <p>Interfaz accesible diseñada para navegar por comandos de voz y retroalimentación auditiva en cada actividad.</p>
+            </article>
+            <article class="edu-card reveal reveal-up">
+                <div class="edu-icon"><i class="fas fa-mobile-alt"></i></div>
+                <h3>Acceso digital universal</h3>
+                <p>Recursos educativos disponibles desde computadora, tablet o móvil para continuar el aprendizaje en cualquier entorno.</p>
+            </article>
+            <article class="edu-card reveal reveal-up">
+                <div class="edu-icon"><i class="fas fa-rainbow"></i></div>
+                <h3>Diseño sin barreras</h3>
+                <p>Contenidos y dinámicas pensadas desde el principio para estudiantes con discapacidad visual.</p>
+            </article>
+            <article class="edu-card reveal reveal-up">
+                <div class="edu-icon"><i class="fas fa-rocket"></i></div>
+                <h3>Autonomía y confianza</h3>
+                <p>Impulsamos la independencia temprana con actividades progresivas que fortalecen seguridad y autoestima.</p>
+            </article>
+        </div>
+    </div>
+</section>
+
+<section id="investigacion" class="visual-disability">
+    <div class="container">
+        <div class="section-title">
+            <h2>¿Qué es la discapacidad visual?</h2>
+        </div>
+        <div class="visual-grid">
+            <div class="visual-text">
+                <p>La discapacidad visual es una condición que limita parcial o totalmente la capacidad de ver y requiere apoyos específicos para acceder al aprendizaje, la comunicación y la participación social.</p>
+                <p>Con estimulación adecuada, herramientas accesibles y estrategias pedagógicas adaptadas, los niños pueden desarrollar habilidades cognitivas, lingüísticas y socioemocionales en igualdad de oportunidades.</p>
+                <ul class="about-list visual-list">
+                    <li><strong>Baja visión:</strong> existe resto visual, pero se necesitan ajustes de contraste, tamaño, audio y apoyo estructurado.</li>
+                    <li><strong>Ceguera total:</strong> el aprendizaje ocurre principalmente por vías auditivas, táctiles y cinestésicas.</li>
+                    <li><strong>Intervención temprana:</strong> acelera el desarrollo de autonomía, orientación y lenguaje.</li>
                 </ul>
             </div>
-            <div class="about-image"></div>
+            <aside class="visual-side">
+                <div class="info-box reveal reveal-left">
+                    <h3>¿Cómo ayuda NAVI?</h3>
+                    <p>Transforma contenidos escolares en experiencias sonoras interactivas con instrucciones claras, repetición flexible y progreso personalizado.</p>
+                </div>
+                <div class="info-box reveal reveal-left">
+                    <h3>Enfoque pedagógico</h3>
+                    <p>Integramos juego, exploración y rutinas guiadas para fortalecer memoria auditiva, comprensión y habilidades para la vida diaria.</p>
+                </div>
+            </aside>
         </div>
     </div>
 </section>
 
-<!-- Características -->
-<section id="caracteristicas" class="features">
+<section id="caracteristicas" class="goals-showcase">
     <div class="container">
         <div class="section-title">
-            <h2>Características de Navi</h2>
+            <h2>Nuestros Objetivos</h2>
         </div>
-        <div class="features-grid">
-            <div class="feature-card">
-                <div class="feature-icon">
-                    <i class="fas fa-universal-access"></i>
-                </div>
-                <h3>Completamente Accesible</h3>
-                <p>Diseñada desde sus cimientos para ser utilizada por niños con discapacidad visual, con navegación intuitiva y controles adaptados.</p>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon">
-                    <i class="fas fa-headphones"></i>
-                </div>
-                <h3>Interfaz Sonora</h3>
-                <p>Navegación completamente auditiva con instrucciones claras y feedback sonoro para cada interacción.</p>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon">
-                    <i class="fas fa-child"></i>
-                </div>
-                <h3>Adaptada por Edad</h3>
-                <p>Contenido y actividades específicamente diseñadas para el rango de edad de 3 a 7 años, considerando sus capacidades cognitivas.</p>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon">
-                    <i class="fas fa-chart-line"></i>
-                </div>
-                <h3>Seguimiento Personalizado</h3>
-                <p>Monitoreo del progreso individual con ajustes automáticos según el desarrollo de cada niño.</p>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon">
-                    <i class="fas fa-gamepad"></i>
-                </div>
-                <h3>Enfoque Lúdico</h3>
-                <p>Aprendizaje a través del juego, con actividades divertidas que mantienen el interés y motivación de los niños.</p>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon">
-                    <i class="fas fa-shield-alt"></i>
-                </div>
-                <h3>Entorno Seguro</h3>
-                <p>Espacio libre de distracciones y contenido inapropiado, diseñado específicamente para niños pequeños.</p>
-            </div>
+        <p class="section-lead">Trabajamos para crear un mundo donde la educación sea verdaderamente accesible para todos.</p>
+        <div class="goals-grid">
+            <article class="goal-card reveal reveal-up">
+                <div class="goal-icon"><i class="fas fa-volume-up"></i></div>
+                <h3>Aprendizaje sonoro</h3>
+                <p>Diseñar experiencias educativas centradas en audio para una navegación clara y natural.</p>
+            </article>
+            <article class="goal-card reveal reveal-up">
+                <div class="goal-icon"><i class="fas fa-globe-americas"></i></div>
+                <h3>Mayor cobertura</h3>
+                <p>Llegar a escuelas y familias con menos acceso a recursos educativos inclusivos.</p>
+            </article>
+            <article class="goal-card reveal reveal-up">
+                <div class="goal-icon"><i class="fas fa-seedling"></i></div>
+                <h3>Autonomía temprana</h3>
+                <p>Impulsar independencia progresiva mediante actividades adaptadas al ritmo de cada niño.</p>
+            </article>
+            <article class="goal-card reveal reveal-up">
+                <div class="goal-icon"><i class="fas fa-chart-line"></i></div>
+                <h3>Impacto medible</h3>
+                <p>Evaluar resultados con métricas educativas y evidencia para mejorar continuamente.</p>
+            </article>
         </div>
     </div>
 </section>
 
-<!-- Galería -->
-<section id="galeria" class="gallery">
+<section id="objetivos" class="impact-section">
     <div class="container">
         <div class="section-title">
-            <h2>Galería de Navi</h2>
+            <h2>El impacto que buscamos</h2>
         </div>
-        <div class="gallery-grid">
-            <div class="gallery-item" style="background-image: url('{% static "images/galeria1.jpg" %}')"></div>
-            <div class="gallery-item" style="background-image: url('{% static "images/galeria2.jpg" %}')"></div>
-            <div class="gallery-item" style="background-image: url('{% static "images/galeria3.jpg" %}')"></div>
+        <p class="section-lead">Creamos oportunidades reales para niñas y niños con discapacidad visual: más acceso, más autonomía y más aprendizaje significativo.</p>
+        <div class="impact-grid">
+            <div class="impact-left">
+                <div class="impact-stats">
+                    <div class="impact-stat reveal reveal-up"><strong class="count-up" data-target="12000">+12,000</strong><span>usuarios alcanzados</span></div>
+                    <div class="impact-stat reveal reveal-up"><strong class="count-up" data-target="180">+180</strong><span>escuelas y centros</span></div>
+                    <div class="impact-stat reveal reveal-up"><strong class="count-up" data-target="45000">+45,000</strong><span>actividades realizadas</span></div>
+                </div>
+                <h3>Nuestros objetivos de impacto</h3>
+                <ul class="about-list impact-list">
+                    <li>Aumentar el acceso a recursos educativos inclusivos en comunidades con menor cobertura.</li>
+                    <li>Reducir la dependencia de apoyo externo con herramientas de autonomía temprana.</li>
+                    <li>Generar evidencia sobre prácticas efectivas en educación sensorial para escalar intervenciones.</li>
+                </ul>
+            </div>
+            <div class="impact-right">
+                <h3>Historias y testimonios</h3>
+                <blockquote class="testimonial reveal reveal-right">"NAVI permitió que mi hijo descubriera nuevas formas de jugar y aprender con más independencia." — Laura, madre</blockquote>
+                <blockquote class="testimonial reveal reveal-right">"En solo tres meses vimos mejoras en interacción social, vocabulario y participación en clase." — Docente de educación especial</blockquote>
+                <p>Colaboramos con organizaciones locales para medir resultados y adaptar contenidos con base en evidencia.</p>
+            </div>
         </div>
     </div>
 </section>
 
-<!-- Investigación del mercado -->
-<section id="investigacion" class="market-research">
+<section id="planes" class="plans-section">
     <div class="container">
         <div class="section-title">
-            <h2>Investigación del Mercado</h2>
+            <h2>Planes de Suscripción</h2>
         </div>
-        <div class="research-content">
-            <p>En Yucatán, donde más de 1200 niños viven con discapacidad visual (INEGI 2020), no existen plataformas educativas diseñadas específicamente para la primera infancia que sean completamente accesibles.</p>
-            <p>Navi cambia este paradigma con una <strong>selección especializada</strong> y <strong>adaptación a la edad</strong> de los usuarios, llenando un vacío crítico en el mercado educativo inclusivo.</p>
-            
-            <div class="stats">
-                <div class="stat-item">
-                    <div class="stat-number">1200+</div>
-                    <div class="stat-desc">Niños con discapacidad visual en Yucatán</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-number">3-7</div>
-                    <div class="stat-desc">Años, rango de edad objetivo</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-number">0</div>
-                    <div class="stat-desc">Plataformas similares actualmente</div>
-                </div>
-            </div>
+        <p class="section-lead">Elige el plan que mejor se adapte a tu familia o institución. Todos incluyen acceso a la plataforma educativa.</p>
+        <div class="plans-grid">
+            <article class="plan-card reveal reveal-up">
+                <h3>Inicio</h3>
+                <p class="plan-price">Gratis <span>siempre</span></p>
+                <ul>
+                    <li>Acceso a contenido básico</li>
+                    <li>3 actividades diarias</li>
+                    <li>Perfil infantil</li>
+                    <li>Soporte por correo</li>
+                </ul>
+                <a href="{% url 'account_signup' %}" class="btn plan-btn">Comenzar gratis</a>
+            </article>
+            <article class="plan-card plan-popular reveal reveal-up">
+                <span class="plan-badge">Más popular</span>
+                <h3>Pro</h3>
+                <p class="plan-price">$6.99 <span>/mes</span></p>
+                <ul>
+                    <li>Todo lo del plan Inicio</li>
+                    <li>Actividades ilimitadas</li>
+                    <li>Contenido personalizado</li>
+                    <li>Seguimiento de progreso</li>
+                    <li>Soporte prioritario</li>
+                </ul>
+                <a href="{% url 'account_signup' %}" class="btn plan-btn">Suscribirse ahora</a>
+            </article>
+            <article class="plan-card reveal reveal-up">
+                <h3>Familiar</h3>
+                <p class="plan-price">$12.99 <span>/mes</span></p>
+                <ul>
+                    <li>Todo lo del plan Pro</li>
+                    <li>Hasta 3 perfiles</li>
+                    <li>Actividades multinivel</li>
+                    <li>Reportes detallados</li>
+                    <li>Consultas con expertos</li>
+                </ul>
+                <a href="{% url 'account_signup' %}" class="btn plan-btn">Elegir familiar</a>
+            </article>
         </div>
     </div>
 </section>
 
-<!-- Objetivos -->
-<section id="objetivos">
+<section id="contacto" class="help-section">
     <div class="container">
         <div class="section-title">
-            <h2>Objetivos</h2>
+            <h2>¿Cómo podemos ayudar?</h2>
         </div>
-        <div class="table-wrap">
-            <table class="objectives-table">
-                <thead>
-                    <tr>
-                        <th>Indicadores</th>
-                        <th>Acciones en la plataforma digital</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>Crear experiencias para niños ciegos</td>
-                        <td>Desarrollar contenido táctil y auditivo adaptado, con navegación por voz y sonidos direccionales</td>
-                    </tr>
-                    <tr>
-                        <td>Fomentar el desarrollo cognitivo</td>
-                        <td>Implementar juegos educativos con retroalimentación auditiva inmediata y progresiva dificultad</td>
-                    </tr>
-                    <tr>
-                        <td>Adaptarse a necesidades individuales</td>
-                        <td>Ofrecer personalización según nivel de desarrollo, preferencias y ritmo de aprendizaje</td>
-                    </tr>
-                    <tr>
-                        <td>Promover aprendizaje lúdico</td>
-                        <td>Diseñar actividades divertidas y motivadoras con sistema de recompensas auditivas</td>
-                    </tr>
-                </tbody>
-            </table>
+        <div class="help-search">
+            <input type="text" placeholder="Buscar ayuda sobre accesibilidad, cuenta o actividades" aria-label="Buscar ayuda">
+            <button type="button" aria-label="Buscar"><i class="fas fa-search"></i></button>
+        </div>
+        <div class="help-grid">
+            <article class="help-card reveal reveal-up">
+                <div class="help-icon"><i class="fas fa-wrench"></i></div>
+                <h3>Errores y resolución de problemas</h3>
+                <p>Guías paso a paso para resolver incidencias técnicas y recomendaciones rápidas.</p>
+            </article>
+            <article class="help-card reveal reveal-up">
+                <div class="help-icon"><i class="fas fa-question"></i></div>
+                <h3>Preguntas frecuentes</h3>
+                <p>Respuestas sobre uso de NAVI, configuración de cuenta y opciones de accesibilidad.</p>
+            </article>
+            <article class="help-card reveal reveal-up">
+                <div class="help-icon"><i class="fas fa-comments"></i></div>
+                <h3>Pregunta a la comunidad</h3>
+                <p>Conecta con familias y educadores para compartir ideas y buenas prácticas.</p>
+            </article>
+        </div>
+        <div class="support-box">
+            <h3>Soporte directo</h3>
+            <p>¿Necesitas ayuda personalizada? Escríbenos a <a href="mailto:soporte@navicito.com">soporte@navicito.com</a> y nuestro equipo responderá en 24-48 horas hábiles.</p>
         </div>
     </div>
 </section>
 
-<!-- Objetivos a futuro -->
-<section class="features">
-    <div class="container">
-        <div class="section-title">
-            <h2>Objetivos a Futuro</h2>
-        </div>
-        <div class="features-grid">
-            <div class="feature-card">
-                <div class="feature-icon">
-                    <i class="fas fa-wave-square"></i>
-                </div>
-                <h3>Aprendizaje sensorial con audio</h3>
-                <p>Desarrollo de habilidades cognitivas mediante estímulos auditivos diseñados específicamente para niños con discapacidad visual.</p>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon">
-                    <i class="fas fa-book"></i>
-                </div>
-                <h3>Biblioteca colaborativa accesible</h3>
-                <p>Plataforma comunitaria donde usuarios y educadores pueden compartir y acceder a recursos educativos en formatos accesibles.</p>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon">
-                    <i class="fas fa-music"></i>
-                </div>
-                <h3>Cuaderno digital con interacción sonora</h3>
-                <p>Herramienta educativa que combina la escritura con retroalimentación auditiva para reforzar el aprendizaje de conceptos básicos.</p>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon">
-                    <i class="fas fa-braille"></i>
-                </div>
-                <h3>Conversión de texto a braille para impresión</h3>
-                <p>Sistema que transforma contenido digital a formato braille físico, facilitando el acceso a materiales educativos impresos.</p>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon">
-                    <i class="fas fa-wifi"></i>
-                </div>
-                <h3>Accesibilidad sin conexión a internet</h3>
-                <p>Funcionalidad completa disponible sin necesidad de conexión a internet, garantizando acceso continuo a los recursos educativos.</p>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon">
-                    <i class="fas fa-puzzle-piece"></i>
-                </div>
-                <h3>Productos complementarios</h3>
-                <p>Desarrollo de herramientas y materiales adicionales que enriquecen la experiencia educativa y se adaptan a diferentes necesidades.</p>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- Registrarse navi codigo -->
 <section class="cta">
     <div class="container">
-        <h2>¿Listo para conocer Navi?</h2>
-        <p>Descubre cómo nuestra plataforma puede transformar la experiencia educativa para niños con discapacidad visual</p>
+        <h2>¿Listo para comenzar con NAVI?</h2>
+        <p>Únete y descubre una forma más accesible, divertida y efectiva de aprender.</p>
         {% if user.is_authenticated %}
             <a href="#" class="btn">Ver Mi Perfil</a>
         {% else %}

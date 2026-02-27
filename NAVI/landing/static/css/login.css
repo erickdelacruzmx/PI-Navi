@@ -41,6 +41,15 @@ body.login-body {
     position: relative;
 }
 
+.login-box::before {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border-radius: 18px;
+    background: linear-gradient(135deg, rgba(79, 99, 215, 0.26), rgba(122, 76, 192, 0.2));
+    z-index: -1;
+}
+
 .login-header {
     margin-bottom: 16px;
     text-align: center;
@@ -110,7 +119,29 @@ body.login-body {
     font-family: 'Poppins', sans-serif;
 }
 
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    height: 50px;
+    padding: 10px 14px;
+    border: 2px solid var(--field-border);
+    border-radius: 10px;
+    background: var(--field-bg);
+    font-size: 13px;
+    color: #1f2937;
+    font-family: 'Poppins', sans-serif;
+}
+
 .form-control:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(47, 52, 157, 0.12);
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
     outline: none;
     border-color: var(--primary);
     box-shadow: 0 0 0 3px rgba(47, 52, 157, 0.12);
@@ -152,6 +183,65 @@ body.login-body {
 .btn-login:hover {
     background: linear-gradient(135deg, #455bd2 0%, #6b42ba 100%);
     transform: translateY(-1px);
+}
+
+.email-chip {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    height: 56px;
+    padding: 7px 10px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #eef2ff 0%, #ede9fe 100%);
+    border: 1px solid #c7d2fe;
+    box-shadow: 0 8px 18px rgba(79, 99, 215, 0.15);
+}
+
+.email-chip-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    background: #ffffff;
+    border: 1px solid #dbe3ff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+}
+
+.email-chip-icon i {
+    font-size: 19px;
+    background: conic-gradient(from -45deg, #ea4335 0deg 90deg, #fbbc05 90deg 180deg, #34a853 180deg 270deg, #4285f4 270deg 360deg);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+.email-chip-input.form-control {
+    background: transparent;
+    border: 0;
+    box-shadow: none;
+    height: 100%;
+    font-size: 15px;
+    font-weight: 600;
+    color: #203a68;
+    padding: 0 6px;
+}
+
+.email-chip-input.form-control:focus {
+    box-shadow: none;
+    border: 0;
+}
+
+.email-chip-status {
+    flex: 0 0 auto;
+    padding: 7px 11px;
+    border-radius: 999px;
+    background: linear-gradient(135deg, #4f63d7 0%, #7a4cc0 100%);
+    color: #ffffff;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.2px;
 }
 
 .social-auth {
@@ -359,6 +449,27 @@ body.theme-dark .forgot-password {
 }
 
 body.theme-dark .form-control {
+    color: #e2e8f0;
+}
+
+body.theme-dark .form-group input,
+body.theme-dark .form-group select,
+body.theme-dark .form-group textarea {
+    color: #e2e8f0;
+}
+
+body.theme-dark .email-chip {
+    background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+    border-color: #334155;
+    box-shadow: 0 12px 24px rgba(2, 6, 23, 0.45);
+}
+
+body.theme-dark .email-chip-icon {
+    background: #0b1220;
+    border-color: #334155;
+}
+
+body.theme-dark .email-chip-input.form-control {
     color: #e2e8f0;
 }
 
