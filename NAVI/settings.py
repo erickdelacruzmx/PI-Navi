@@ -147,17 +147,21 @@ LOGOUT_REDIRECT_URL = '/'
 ACCOUNT_DEFAULT_HTTP_PROTOCOL = 'https' if not DEBUG else 'http'
 DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'Navi <no-reply@navicito.com>')
 
-if DEBUG:
-    EMAIL_BACKEND = os.getenv('EMAIL_BACKEND', 'django.core.mail.backends.console.EmailBackend')
-else:
-    EMAIL_BACKEND = os.getenv('EMAIL_BACKEND', 'django.core.mail.backends.smtp.EmailBackend')
-
 EMAIL_HOST = os.getenv('EMAIL_HOST', 'smtp.gmail.com')
 EMAIL_PORT = int(os.getenv('EMAIL_PORT', '587'))
 EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', '')
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', '')
 EMAIL_USE_TLS = os.getenv('EMAIL_USE_TLS', 'True').lower() in ('1', 'true', 'yes', 'on')
 EMAIL_USE_SSL = os.getenv('EMAIL_USE_SSL', 'False').lower() in ('1', 'true', 'yes', 'on')
+
+EMAIL_BACKEND = os.getenv('EMAIL_BACKEND', '').strip()
+if not EMAIL_BACKEND:
+    if EMAIL_HOST_USER and EMAIL_HOST_PASSWORD:
+        EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+    elif DEBUG:
+        EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+    else:
+        EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
 LANGUAGE_CODE = 'es-mx'
 TIME_ZONE = 'America/Mexico_City'
@@ -201,3 +205,12 @@ if DEBUG:
 ACCOUNT_FORMS = {
     'signup': 'NAVI.landing.forms.CustomSignupForm',
 }
+
+# Configuración de Correo Electrónico (Recuperación de contraseña)
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = os.getenv('EMAIL_USER')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_PASSWORD')
+DEFAULT_FROM_EMAIL = f"Equipo Navi <{EMAIL_HOST_USER}>"
