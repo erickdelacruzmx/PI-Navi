@@ -111,6 +111,71 @@ html {
     min-width: 42px;
 }
 
+.theme-toggle-label {
+    display: none;
+}
+
+body.menu-open {
+    overflow: hidden;
+}
+
+.nav-backdrop {
+    position: fixed;
+    inset: 72px 0 0;
+    background: rgba(15, 23, 42, 0.45);
+    backdrop-filter: blur(2px);
+    z-index: 998;
+}
+
+@media (max-width: 1023px) {
+    #nav-panel {
+        position: fixed;
+        top: 74px;
+        right: 10px;
+        width: min(92vw, 360px);
+        max-height: calc(100dvh - 88px);
+        overflow-y: auto;
+        border: 1px solid #dbe3f0 !important;
+        border-radius: 18px;
+        padding: 14px 14px 16px;
+        box-shadow: 0 26px 44px rgba(15, 23, 42, 0.24);
+        z-index: 999;
+        backdrop-filter: blur(8px);
+    }
+
+    #nav-panel nav {
+        gap: 8px;
+    }
+
+    #nav-panel .nav-link {
+        display: block;
+        border-radius: 12px;
+        padding: 11px 12px;
+    }
+
+    .nav-actions {
+        margin-top: 6px;
+        border-top: 1px solid #e2e8f0;
+        padding-top: 12px;
+    }
+
+    .nav-actions > a,
+    .nav-actions > button,
+    .nav-actions > div {
+        width: 100%;
+        justify-content: center;
+    }
+
+    #theme-toggle-public {
+        gap: 8px;
+        justify-content: center;
+    }
+
+    .theme-toggle-label {
+        display: inline;
+    }
+}
+
 /* Hero Section */
 .hero {
     background: linear-gradient(135deg, var(--primary), var(--secondary));
@@ -809,6 +874,14 @@ body.theme-dark #nav-toggle:hover {
 
 body.theme-dark #nav-panel {
     background: rgba(15, 23, 42, 0.98) !important;
+}
+
+body.theme-dark .nav-backdrop {
+    background: rgba(2, 6, 23, 0.6);
+}
+
+body.theme-dark .nav-actions {
+    border-top-color: #2c3a50;
 }
 
 body.theme-dark footer {

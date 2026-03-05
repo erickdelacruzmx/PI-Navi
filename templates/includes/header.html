@@ -10,6 +10,8 @@
             <i class="fas fa-bars"></i>
         </button>
 
+        <div id="nav-backdrop" class="nav-backdrop hidden lg:hidden" aria-hidden="true"></div>
+
         <div id="nav-panel" class="nav-panel hidden w-full flex-col gap-4 border-t border-slate-200 bg-white/95 pt-4 lg:flex lg:w-auto lg:flex-1 lg:flex-row lg:items-center lg:justify-between lg:border-t-0 lg:bg-transparent lg:pt-0">
             <nav class="flex flex-col gap-2.5 lg:flex-row lg:items-center lg:gap-5">
                 <a class="nav-link" data-scroll data-section="conoce-a-navi" href="{% url 'landing:index' %}#conoce-a-navi">Conoce a NAVI</a>
@@ -20,9 +22,10 @@
                 <a class="nav-link" data-scroll data-section="contacto" href="{% url 'landing:index' %}#contacto">Contacto</a>
             </nav>
 
-            <div class="flex flex-col gap-3 lg:flex-row lg:items-center">
+            <div class="nav-actions flex flex-col gap-3 lg:flex-row lg:items-center">
                 <button id="theme-toggle-public" type="button" class="theme-toggle-public inline-flex items-center justify-center rounded-full border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:border-slate-400 hover:text-slate-900" aria-label="Alternar tema" title="Alternar tema">
                     <i class="fas fa-moon"></i>
+                    <span class="theme-toggle-label">Modo oscuro</span>
                 </button>
                 {% if user.is_authenticated %}
                     <div class="flex items-center gap-2 rounded-full bg-slate-100 px-3 py-2 text-sm text-slate-700">
@@ -34,8 +37,14 @@
                         Cerrar sesión
                     </a>
                 {% else %}
-                    <a href="{% url 'account_login' %}" class="inline-flex items-center justify-center rounded-full border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:border-slate-400 hover:text-slate-900">Iniciar sesión</a>
-                    <a href="{% url 'account_signup' %}" class="inline-flex items-center justify-center rounded-full bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700">Registrarse</a>
+                    <a href="{% url 'account_login' %}" class="inline-flex items-center justify-center rounded-full border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:border-slate-400 hover:text-slate-900">
+                        <i class="fas fa-right-to-bracket mr-2"></i>
+                        Iniciar sesión
+                    </a>
+                    <a href="{% url 'account_signup' %}" class="inline-flex items-center justify-center rounded-full bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700">
+                        <i class="fas fa-user-plus mr-2"></i>
+                        Registrarse
+                    </a>
                 {% endif %}
             </div>
         </div>

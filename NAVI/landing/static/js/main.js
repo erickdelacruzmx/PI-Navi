@@ -7,8 +7,12 @@ function applyPublicTheme() {
     document.documentElement.classList.toggle('theme-dark', shouldUseDark);
 
     const toggleButtonIcon = document.querySelector('#theme-toggle-public i');
+    const toggleButtonLabel = document.querySelector('#theme-toggle-public .theme-toggle-label');
     if (toggleButtonIcon) {
         toggleButtonIcon.className = shouldUseDark ? 'fas fa-sun' : 'fas fa-moon';
+    }
+    if (toggleButtonLabel) {
+        toggleButtonLabel.textContent = shouldUseDark ? 'Modo claro' : 'Modo oscuro';
     }
 }
 
@@ -82,24 +86,62 @@ document.addEventListener('DOMContentLoaded', function() {
 document.addEventListener('DOMContentLoaded', function() {
     const toggle = document.getElementById('nav-toggle');
     const panel = document.getElementById('nav-panel');
+    const backdrop = document.getElementById('nav-backdrop');
 
     if (!toggle || !panel) {
         return;
     }
 
+    const closePanel = () => {
+        panel.classList.add('hidden');
+        backdrop && backdrop.classList.add('hidden');
+        document.body.classList.remove('menu-open');
+        toggle.setAttribute('aria-expanded', 'false');
+    };
+
+    const openPanel = () => {
+        panel.classList.remove('hidden');
+        backdrop && backdrop.classList.remove('hidden');
+        document.body.classList.add('menu-open');
+        toggle.setAttribute('aria-expanded', 'true');
+    };
+
     toggle.addEventListener('click', function() {
         const isHidden = panel.classList.contains('hidden');
-        panel.classList.toggle('hidden');
-        toggle.setAttribute('aria-expanded', String(isHidden));
+        if (isHidden) {
+            openPanel();
+        } else {
+            closePanel();
+        }
+    });
+
+    if (backdrop) {
+        backdrop.addEventListener('click', closePanel);
+    }
+
+    document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape' && !panel.classList.contains('hidden')) {
+            closePanel();
+        }
     });
 
     panel.querySelectorAll('a').forEach(link => {
         link.addEventListener('click', () => {
             if (window.innerWidth < 1024) {
-                panel.classList.add('hidden');
-                toggle.setAttribute('aria-expanded', 'false');
+                closePanel();
             }
         });
+    });
+
+    window.addEventListener('resize', () => {
+        if (window.innerWidth >= 1024) {
+            panel.classList.remove('hidden');
+            backdrop && backdrop.classList.add('hidden');
+            document.body.classList.remove('menu-open');
+            toggle.setAttribute('aria-expanded', 'false');
+        } else if (window.innerWidth < 1024 && toggle.getAttribute('aria-expanded') !== 'true') {
+            panel.classList.add('hidden');
+        }
     });
 
     const publicThemeButton = document.getElementById('theme-toggle-public');
