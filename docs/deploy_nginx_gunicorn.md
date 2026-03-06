@@ -26,6 +26,9 @@ Copia `.env.example` a `.env` y ajusta al dominio real:
 DEBUG=False
 ALLOWED_HOSTS=navicito.com,www.navicito.com
 CSRF_TRUSTED_ORIGINS=https://navicito.com,https://www.navicito.com
+SESSION_COOKIE_DOMAIN=.navicito.com
+CSRF_COOKIE_DOMAIN=.navicito.com
+CSRF_COOKIE_HTTPONLY=False
 DB_NAME=...
 DB_USER=...
 DB_PASSWORD=...

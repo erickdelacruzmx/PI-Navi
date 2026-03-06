@@ -24,8 +24,22 @@ _load_env_file(BASE_DIR / '.env')
 SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-78nleun9=hy%^y+#dg3zjx8tsecf1kxflu#zj$^mb87$e-4v9o')
 DEBUG = os.getenv('DEBUG', 'True').lower() in ('1', 'true', 'yes', 'on')
 ALLOWED_HOSTS = [h.strip() for h in os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',') if h.strip()]
+
+
+def _build_csrf_trusted_origins_from_hosts(hosts):
+    trusted = []
+    for host in hosts:
+        normalized = host.strip().lstrip('.')
+        if not normalized or normalized in ('localhost', '127.0.0.1', '[::1]'):
+            continue
+        trusted.append(f'https://{normalized}')
+    return trusted
+
+
 CSRF_TRUSTED_ORIGINS = [o.strip() for o in os.getenv('CSRF_TRUSTED_ORIGINS', '').split(',') if o.strip()]
-'www.navicito.com', 'navicito.com'
+if not CSRF_TRUSTED_ORIGINS and not DEBUG:
+    # Fallback robusto para evitar 403 por origen en despliegues donde falte la variable en .env.
+    CSRF_TRUSTED_ORIGINS = _build_csrf_trusted_origins_from_hosts(ALLOWED_HOSTS)
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -212,7 +226,7 @@ if not DEBUG:
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
     SESSION_COOKIE_HTTPONLY = True
-    CSRF_COOKIE_HTTPONLY = os.getenv('CSRF_COOKIE_HTTPONLY', 'True').lower() in ('1', 'true', 'yes', 'on')
+    CSRF_COOKIE_HTTPONLY = os.getenv('CSRF_COOKIE_HTTPONLY', 'False').lower() in ('1', 'true', 'yes', 'on')
     SECURE_BROWSER_XSS_FILTER = True
     SECURE_CONTENT_TYPE_NOSNIFF = True
     X_FRAME_OPTIONS = 'DENY'
