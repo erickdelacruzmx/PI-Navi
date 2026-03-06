@@ -886,9 +886,9 @@ createApp({
                 window.clearTimeout(timeoutId);
             }
 
-            const data = await response.json();
+            const data = await this.parseNaviApiResponse(response, 'No se pudo sintetizar audio.');
             if (!response.ok) {
-                throw new Error(data.error || 'No se pudo sintetizar audio.');
+                throw new Error((data && data.error) || `No se pudo sintetizar audio (HTTP ${response.status}).`);
             }
 
             if (data.tts_provider !== 'gemini') {
@@ -1092,6 +1092,60 @@ createApp({
             return decodeURIComponent(csrfCookie.split('=')[1]);
         },
 
+        getNaviHttpErrorMessage(status, fallbackMessage) {
+            const httpStatus = Number(status || 0);
+            if (httpStatus === 401) {
+                return 'Tu sesion ha expirado. Inicia sesion nuevamente.';
+            }
+            if (httpStatus === 403) {
+                return 'Solicitud bloqueada (403). Verifica login activo, CSRF_TRUSTED_ORIGINS y dominio HTTPS en el servidor.';
+            }
+            if (httpStatus >= 500) {
+                return 'Error temporal del servidor. Revisa logs de Nginx/Gunicorn y de Django.';
+            }
+            return `${fallbackMessage} (HTTP ${httpStatus || 'desconocido'}).`;
+        },
+
+        async parseNaviApiResponse(response, fallbackMessage) {
+            const status = Number(response?.status || 0);
+            const contentType = String(response?.headers?.get('content-type') || '').toLowerCase();
+            const bodyText = await response.text();
+            const trimmed = String(bodyText || '').trim();
+
+            if (!trimmed) {
+                if (!response?.ok) {
+                    throw new Error(this.getNaviHttpErrorMessage(status, fallbackMessage));
+                }
+                return {};
+            }
+
+            const looksHtml = contentType.includes('text/html')
+                || trimmed.startsWith('<!DOCTYPE html')
+                || trimmed.startsWith('<html');
+
+            if (looksHtml) {
+                if (response?.url?.includes('/accounts/login')) {
+                    throw new Error('Tu sesion ha expirado. Inicia sesion nuevamente.');
+                }
+                if (status === 403) {
+                    throw new Error(this.getNaviHttpErrorMessage(status, fallbackMessage));
+                }
+                if (status >= 500) {
+                    throw new Error(this.getNaviHttpErrorMessage(status, fallbackMessage));
+                }
+                throw new Error(`${fallbackMessage} El servidor devolvio HTML en lugar de JSON (HTTP ${status}).`);
+            }
+
+            try {
+                return JSON.parse(trimmed);
+            } catch (error) {
+                if (!response?.ok) {
+                    throw new Error(this.getNaviHttpErrorMessage(status, fallbackMessage));
+                }
+                throw new Error(`${fallbackMessage} Respuesta no valida del servidor (esperaba JSON).`);
+            }
+        },
+
         focusNaviInput() {
             this.$nextTick(() => {
                 this.$refs.naviInput?.focus();
@@ -1116,11 +1170,10 @@ createApp({
                     }
                 });
 
+                const data = await this.parseNaviApiResponse(response, 'No se pudo cargar la conversacion.');
                 if (!response.ok) {
-                    throw new Error('No se pudo cargar la conversacion.');
+                    throw new Error((data && data.error) || `No se pudo cargar la conversacion (HTTP ${response.status}).`);
                 }
-
-                const data = await response.json();
                 this.naviConversationId = data.conversation_id;
                 this.naviConversation = Array.isArray(data.messages) ? data.messages : [];
                 this.applyNaviVoicePreferences(data.voice_preferences || {});
@@ -1176,12 +1229,7 @@ createApp({
                     }),
                 });
 
-                let data = null;
-                try {
-                    data = await response.json();
-                } catch (parseError) {
-                    data = null;
-                }
+                const data = await this.parseNaviApiResponse(response, 'No se pudo obtener respuesta de Navi.');
 
                 if (!response.ok) {
                     const backendError = data && typeof data.error === 'string' ? data.error : '';
