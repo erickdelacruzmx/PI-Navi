@@ -6,6 +6,7 @@ app_name = 'landing'
 urlpatterns = [
     path('', views.home, name='index'),  # ¡DEBE SER 'index'!
     path('health/', views.health_view, name='health'),
+    path('api/csrf/', views.csrf_bootstrap_view, name='csrf_bootstrap'),
     path('api/navi/conversation/', views.navi_conversation_view, name='navi_conversation'),
     path('api/navi/chat/', views.navi_chat_view, name='navi_chat'),
     path('api/navi/preferences/', views.navi_voice_preferences_view, name='navi_preferences'),

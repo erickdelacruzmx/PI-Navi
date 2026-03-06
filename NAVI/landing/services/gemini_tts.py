@@ -221,6 +221,13 @@ def _request_tts_for_model(model, api_key, payload, timeout_seconds):
         raise
 
 
+def _looks_like_placeholder_api_key(api_key):
+    normalized = (api_key or '').strip().upper()
+    if not normalized:
+        return True
+    return any(token in normalized for token in ('REEMPLAZA', 'REPLACE', 'TU_API_KEY', 'GEMINI_API_KEY'))
+
+
 def generate_navi_tts_audio(text, voice_profile='suave'):
     api_key = getattr(settings, 'GEMINI_API_KEY', '').strip()
     model = getattr(settings, 'GEMINI_TTS_MODEL', 'gemini-2.5-flash-preview-tts').strip()
@@ -228,8 +235,8 @@ def generate_navi_tts_audio(text, voice_profile='suave'):
     timeout_seconds = int(getattr(settings, 'GEMINI_TTS_TIMEOUT_SECONDS', 25))
     max_chars = int(getattr(settings, 'GEMINI_TTS_MAX_CHARS', 900))
 
-    if not api_key:
-        raise RuntimeError('GEMINI_API_KEY no esta configurado.')
+    if _looks_like_placeholder_api_key(api_key):
+        raise RuntimeError('GEMINI_API_KEY no esta configurado con una clave valida de Google AI Studio.')
 
     clean_text = (text or '').strip()
     if not clean_text:

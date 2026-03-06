@@ -548,7 +548,7 @@ createApp({
 
         async saveNaviVoicePreferences(partialPreferences) {
             try {
-                await fetch('/api/navi/preferences/', {
+                await this.fetchWithCsrfRetry('/api/navi/preferences/', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -864,7 +864,7 @@ createApp({
 
             let response;
             try {
-                response = await fetch('/api/navi/tts/', {
+                response = await this.fetchWithCsrfRetry('/api/navi/tts/', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -1098,17 +1098,52 @@ createApp({
         },
 
         getCsrfToken() {
+            const cookies = document.cookie ? document.cookie.split('; ') : [];
+            const csrfCookie = cookies.find((row) => row.startsWith('csrftoken='));
+            if (csrfCookie) {
+                return decodeURIComponent(csrfCookie.split('=')[1]);
+            }
+
             const metaToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
             if (metaToken && metaToken !== 'NOTPROVIDED') {
                 return metaToken;
             }
 
-            const cookies = document.cookie ? document.cookie.split('; ') : [];
-            const csrfCookie = cookies.find((row) => row.startsWith('csrftoken='));
-            if (!csrfCookie) {
-                return '';
+            return '';
+        },
+
+        async refreshCsrfCookie() {
+            await fetch('/api/csrf/', {
+                method: 'GET',
+                credentials: 'same-origin',
+                headers: {
+                    Accept: 'application/json',
+                },
+            });
+        },
+
+        async fetchWithCsrfRetry(url, options = {}, shouldRetry = true) {
+            const response = await fetch(url, {
+                credentials: 'same-origin',
+                ...options,
+            });
+
+            if (response.status !== 403 || !shouldRetry) {
+                return response;
             }
-            return decodeURIComponent(csrfCookie.split('=')[1]);
+
+            await this.refreshCsrfCookie();
+
+            const retryHeaders = {
+                ...(options.headers || {}),
+                'X-CSRFToken': this.getCsrfToken(),
+            };
+
+            return fetch(url, {
+                credentials: 'same-origin',
+                ...options,
+                headers: retryHeaders,
+            });
         },
 
         getNaviHttpErrorMessage(status, fallbackMessage) {
@@ -1184,6 +1219,7 @@ createApp({
             try {
                 const response = await fetch('/api/navi/conversation/', {
                     method: 'GET',
+                    credentials: 'same-origin',
                     headers: {
                         'Accept': 'application/json'
                     }
@@ -1235,7 +1271,7 @@ createApp({
             this.scrollNaviToBottom();
 
             try {
-                const response = await fetch('/api/navi/chat/', {
+                const response = await this.fetchWithCsrfRetry('/api/navi/chat/', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
