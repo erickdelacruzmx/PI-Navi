@@ -29,18 +29,21 @@
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-    <link rel="stylesheet" href="{% static "css/app.css" %}?v=20260225-1">
+    <link rel="stylesheet" href="{% static "css/app.css" %}?v=20260305-1">
 
     <!-- Vue 3 -->
-    <script src="https://cdn.jsdelivr.net/npm/vue@3/dist/vue.global.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@3/dist/vue.global.prod.js"></script>
 </head>
 <body class="min-h-screen">
     <div id="app">
+        <transition name="mode-fade">
+            <div v-if="isModeTransitioning" class="mode-transition-overlay" aria-hidden="true"></div>
+        </transition>
         
         <!-- Toast Notification -->
-        <div class="toast-notification" :class="{ 'show': showToast }" v-text="toastMessage"></div>
+        <div class="toast-notification" :class="[{ 'show': showToast }, 'is-' + toastVariant]" role="status" aria-live="polite" v-text="toastMessage"></div>
 
-        <button @click="toggleThemeQuick" type="button" class="theme-fab" :aria-label="isDarkTheme ? 'Activar modo claro' : 'Activar modo oscuro'" :title="isDarkTheme ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'">
+        <button v-if="currentMode === 'tutor'" @click="toggleThemeQuick" type="button" class="theme-fab" :aria-label="isDarkTheme ? 'Activar modo claro' : 'Activar modo oscuro'" :title="isDarkTheme ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'">
             <i :class="isDarkTheme ? 'fas fa-sun' : 'fas fa-moon'"></i>
         </button>
 
@@ -67,7 +70,7 @@
 
     </div>
 
-    <script src="{% static "js/app.js" %}"></script>
+    <script src="{% static "js/app.js" %}?v=20260305-12"></script>
 </body>
 </html>
 

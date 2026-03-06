@@ -33,6 +33,9 @@ DB_USER=postgres
 DB_PASSWORD=tu_password
 DB_HOST=localhost
 DB_PORT=5432
+GEMINI_API_KEY=tu_api_key_de_gemini
+GEMINI_MODEL=gemini-1.5-flash
+GEMINI_TIMEOUT_SECONDS=20
 ```
 
 ### 4. Aplicar Migraciones
@@ -127,6 +130,52 @@ python manage.py collectstatic
 | `DB_PASSWORD` | Password BD | Local | Secreto seguro |
 | `DB_HOST` | Host de PostgreSQL | `localhost` | Endpoint real |
 | `DB_PORT` | Puerto de PostgreSQL | `5432` | Puerto real |
+| `GEMINI_API_KEY` | API key para agente Navi | Requerida | Requerida |
+| `GEMINI_MODEL` | Modelo Gemini a usar | `gemini-1.5-flash` | Ajustar por costo/calidad |
+| `GEMINI_TIMEOUT_SECONDS` | Timeout de respuesta IA | `20` | `20-30` |
+
+## Navi Agent (Fase A)
+
+La Fase A agrega un chat real de Navi con Gemini.
+
+- Endpoint historial: `GET /api/navi/conversation/`
+- Endpoint chat: `POST /api/navi/chat/`
+- Endpoint preferencias de voz: `POST /api/navi/preferences/`
+- Endpoint TTS natural: `POST /api/navi/tts/`
+- Persistencia: tablas `navi_conversations` y `navi_messages`
+- Preferencias persistidas: tabla `navi_voice_preferences`
+- Interaccion principal por voz desde el circulo de Navi:
+  - Reconocimiento de voz del navegador (SpeechRecognition/webkitSpeechRecognition)
+  - Respuesta auditiva automatica (SpeechSynthesis)
+  - Campo de texto como respaldo si el navegador no soporta voz
+- Tutorial de primera vez en audio (persistido por usuario)
+
+Comandos de voz soportados:
+
+- `repetir`
+- `tutorial`, `ayuda`
+- `voz suave`, `voz infantil`
+- `voz clara`, `voz tutor`
+- `detener`, `parar`, `silencio`
+- `hablar mas lento`
+- `hablar mas rapido`
+- `modo solo audio`, `desactivar modo solo audio`
+- `ir a juegos`, `ir a biblioteca`, `ir a estadisticas`, `ir a configuracion`, `ir a perfil`, `ir a navi`
+
+Nota: para que el chat responda, `GEMINI_API_KEY` debe estar configurada.
+
+Variables recomendadas para TTS natural:
+
+- `GEMINI_TTS_ENABLED=True`
+- `GEMINI_TTS_MODEL=gemini-2.5-flash-preview-tts`
+- `GEMINI_TTS_FALLBACK_MODELS=gemini-2.5-pro-preview-tts`
+- `GEMINI_TTS_TIMEOUT_SECONDS=25`
+- `GEMINI_TTS_MAX_CHARS=900`
+
+Perfiles de voz disponibles:
+
+- `suave`: estilo infantil, calido y pausado.
+- `clara`: estilo neutro e instructivo para tutores.
 
 ## Base de Datos
 

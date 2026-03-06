@@ -126,6 +126,25 @@ SOCIALACCOUNT_EMAIL_AUTHENTICATION_AUTO_CONNECT = True
 
 GOOGLE_CLIENT_ID = os.getenv('GOOGLE_CLIENT_ID', '').strip()
 GOOGLE_CLIENT_SECRET = os.getenv('GOOGLE_CLIENT_SECRET', '').strip()
+GEMINI_API_KEY = os.getenv('GEMINI_API_KEY', '').strip()
+GEMINI_MODEL = os.getenv('GEMINI_MODEL', 'gemini-1.5-flash').strip()
+GEMINI_TIMEOUT_SECONDS = int(os.getenv('GEMINI_TIMEOUT_SECONDS', '20'))
+GEMINI_TEMPERATURE = float(os.getenv('GEMINI_TEMPERATURE', '0.45'))
+GEMINI_MAX_OUTPUT_TOKENS = int(os.getenv('GEMINI_MAX_OUTPUT_TOKENS', '220'))
+GEMINI_TTS_ENABLED = os.getenv('GEMINI_TTS_ENABLED', 'True').lower() in ('1', 'true', 'yes', 'on')
+GEMINI_TTS_MODEL = os.getenv('GEMINI_TTS_MODEL', 'gemini-2.5-flash-preview-tts').strip()
+GEMINI_TTS_FALLBACK_MODELS = [
+    model_name.strip()
+    for model_name in os.getenv('GEMINI_TTS_FALLBACK_MODELS', 'gemini-2.5-pro-preview-tts').split(',')
+    if model_name.strip()
+]
+GEMINI_TTS_TIMEOUT_SECONDS = int(os.getenv('GEMINI_TTS_TIMEOUT_SECONDS', '25'))
+GEMINI_TTS_MAX_CHARS = int(os.getenv('GEMINI_TTS_MAX_CHARS', '900'))
+NAVI_MAX_HISTORY_MESSAGES = int(os.getenv('NAVI_MAX_HISTORY_MESSAGES', '8'))
+NAVI_MAX_HISTORY_CHARS_PER_MESSAGE = int(os.getenv('NAVI_MAX_HISTORY_CHARS_PER_MESSAGE', '420'))
+NAVI_DAILY_TOKEN_BUDGET = int(os.getenv('NAVI_DAILY_TOKEN_BUDGET', '14000'))
+NAVI_DAILY_REQUEST_BUDGET = int(os.getenv('NAVI_DAILY_REQUEST_BUDGET', '80'))
+NAVI_MIN_SECONDS_BETWEEN_REQUESTS = int(os.getenv('NAVI_MIN_SECONDS_BETWEEN_REQUESTS', '2'))
 
 SOCIALACCOUNT_PROVIDERS = {
     'google': {

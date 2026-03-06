@@ -1,4 +1,5 @@
 from django.db import models
+from django.conf import settings
 
 class Genero(models.TextChoices):
     MASCULINO = 'Masculino', 'Masculino'
@@ -115,3 +116,73 @@ class Favorito(models.Model):
 
     def __str__(self):
         return f"{self.navicito} - {self.actividad}"
+
+
+class Conversation(models.Model):
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='navi_conversations',
+    )
+    title = models.CharField(max_length=120, blank=True)
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = 'navi_conversations'
+        ordering = ['-updated_at']
+
+    def __str__(self):
+        return f"Conversation {self.pk} - {self.user_id}"
+
+
+class Message(models.Model):
+    ROLE_USER = 'user'
+    ROLE_ASSISTANT = 'assistant'
+    ROLE_SYSTEM = 'system'
+    ROLE_CHOICES = [
+        (ROLE_USER, 'User'),
+        (ROLE_ASSISTANT, 'Assistant'),
+        (ROLE_SYSTEM, 'System'),
+    ]
+
+    conversation = models.ForeignKey(
+        Conversation,
+        on_delete=models.CASCADE,
+        related_name='messages',
+    )
+    role = models.CharField(max_length=20, choices=ROLE_CHOICES)
+    content = models.TextField()
+    prompt_tokens = models.PositiveIntegerField(default=0)
+    completion_tokens = models.PositiveIntegerField(default=0)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = 'navi_messages'
+        ordering = ['created_at']
+
+    def __str__(self):
+        return f"{self.role} message {self.pk}"
+
+
+class NaviVoicePreference(models.Model):
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='navi_voice_preference',
+    )
+    voice_output_enabled = models.BooleanField(default=True)
+    audio_only_mode = models.BooleanField(default=False)
+    speech_rate = models.FloatField(default=0.95)
+    speech_pitch = models.FloatField(default=1.0)
+    speech_lang = models.CharField(max_length=16, default='es-MX')
+    voice_profile = models.CharField(max_length=20, default='suave')
+    onboarding_completed = models.BooleanField(default=False)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = 'navi_voice_preferences'
+
+    def __str__(self):
+        return f"VoicePreference {self.user_id}"

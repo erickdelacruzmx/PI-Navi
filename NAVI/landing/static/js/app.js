@@ -25,8 +25,38 @@ createApp({
             gameDescription: '',
             showToast: false,
             toastMessage: '',
-            isTalking: false,
-            naviMessage: 'Hola, en que puedo ayudarte hoy?',
+            toastVariant: 'info',
+            toastTimeoutId: null,
+            naviConversation: [],
+            naviConversationId: null,
+            naviInput: '',
+            naviLoading: false,
+            naviLoaded: false,
+            naviError: '',
+            naviListening: false,
+            naviSpeaking: false,
+            naviStatusMessage: 'Toca el circulo para hablar con Navi.',
+            naviVoiceSupported: false,
+            naviVoiceOutputSupported: false,
+            naviVoiceOutputEnabled: true,
+            naviRecognition: null,
+            naviSpeechLanguage: 'es-MX',
+            naviSpeechRate: 0.95,
+            naviSpeechPitch: 1.0,
+            naviVoiceProfile: 'suave',
+            naviAudioElement: null,
+            naviServerPlaybackRate: 1.16,
+            naviServerTtsRequestTimeoutMs: 10000,
+            naviMaxSpeechChars: 190,
+            naviChunkPauseMs: 45,
+            naviLastVoiceInputAt: null,
+            naviLatencyHistory: [],
+            naviAudioOnlyMode: true,
+            naviOnboardingCompleted: false,
+            naviOnboardingRunning: false,
+            isModeTransitioning: false,
+            modeTransitionTimeoutId: null,
+            modeTransitionDurationMs: 260,
             themePreference: 'light',
             isDarkTheme: false,
             systemThemeMediaQuery: null,
@@ -278,29 +308,912 @@ createApp({
     },
 
     methods: {
-        handleNaviClick() {
-            // Activar animacion de "hablando"
-            this.isTalking = true;
+        normalizeVoiceCommand(text) {
+            return (text || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim();
+        },
 
-            // Mensajes de respuesta aleatorios
-            const messages = [
-                'Hola, estoy aqui para ayudarte a aprender.',
-                'Quieres explorar alguna actividad?',
-                'Me encanta aprender contigo.',
-                'En que te puedo ayudar hoy?',
-                'Vamos a divertirnos aprendiendo.',
-                'Puedes explorar juegos, canciones y mucho mas.',
-                'Estoy listo para ayudarte.'
-            ];
+        buildNaviSpeechText(text, maxCharsOverride = null) {
+            const cleanText = String(text || '').replace(/\s+/g, ' ').trim();
+            if (!cleanText) {
+                return '';
+            }
 
-            // Cambiar mensaje aleatoriamente
-            this.naviMessage = messages[Math.floor(Math.random() * messages.length)];
+            const requestedMax = Number(maxCharsOverride);
+            const defaultMax = Number(this.naviMaxSpeechChars) || 320;
+            const maxChars = Number.isFinite(requestedMax)
+                ? Math.max(80, requestedMax)
+                : Math.max(80, defaultMax);
+            if (cleanText.length <= maxChars) {
+                return cleanText;
+            }
 
-            // Desactivar animacion despues de 3 segundos
-            setTimeout(() => {
-                this.isTalking = false;
-                this.naviMessage = 'Hola, en que puedo ayudarte hoy?';
-            }, 3000);
+            const trimmed = cleanText.slice(0, maxChars);
+            const breakpoints = ['. ', '? ', '! ', '; '];
+            let cutIndex = -1;
+            breakpoints.forEach((separator) => {
+                const index = trimmed.lastIndexOf(separator);
+                if (index > cutIndex) {
+                    cutIndex = index;
+                }
+            });
+
+            const cutThreshold = Math.max(60, Math.floor(maxChars * 0.7));
+            const clipped = cutIndex >= cutThreshold
+                ? trimmed.slice(0, cutIndex + 1).trim()
+                : `${trimmed.trim()}...`;
+
+            return clipped;
+        },
+
+        applyNaviProsody(text, { isLastChunk = false } = {}) {
+            let normalized = String(text || '').replace(/\s+/g, ' ').trim();
+            if (!normalized) {
+                return '';
+            }
+
+            normalized = normalized
+                .replace(/\s+([,.;:!?])/g, '$1')
+                .replace(/([,.;:!?])(\S)/g, '$1 $2')
+                .replace(/\.{4,}/g, '...')
+                .trim();
+
+            const hasTerminal = /[.!?]$/.test(normalized);
+            if (!hasTerminal) {
+                normalized += isLastChunk ? '.' : ',';
+            } else if (!isLastChunk && /[.!?]$/.test(normalized)) {
+                normalized = normalized.replace(/[.!?]$/, ',');
+            }
+
+            return normalized;
+        },
+
+        splitNaviSpeechChunks(text, chunkSizeOverride = null) {
+            const cleanText = String(text || '').replace(/\s+/g, ' ').trim();
+            if (!cleanText) {
+                return [];
+            }
+
+            const baseSize = Number(chunkSizeOverride);
+            const maxChunkChars = Number.isFinite(baseSize)
+                ? Math.max(100, baseSize)
+                : Math.max(120, Number(this.naviMaxSpeechChars) || 160);
+
+            const sentences = cleanText
+                .split(/(?<=[.!?])\s+/)
+                .map((item) => item.trim())
+                .filter(Boolean);
+
+            if (!sentences.length) {
+                return [this.buildNaviSpeechText(cleanText, maxChunkChars)];
+            }
+
+            const chunks = [];
+            let current = '';
+
+            const pushCurrent = () => {
+                const normalized = this.buildNaviSpeechText(current, maxChunkChars);
+                if (normalized) {
+                    chunks.push(normalized);
+                }
+                current = '';
+            };
+
+            for (const sentence of sentences) {
+                const candidate = current ? `${current} ${sentence}` : sentence;
+                if (candidate.length <= maxChunkChars) {
+                    current = candidate;
+                    continue;
+                }
+
+                if (current) {
+                    pushCurrent();
+                }
+
+                if (sentence.length <= maxChunkChars) {
+                    current = sentence;
+                    continue;
+                }
+
+                // Si una sola oracion es muy larga, dividirla por palabras.
+                const words = sentence.split(/\s+/).filter(Boolean);
+                let wordChunk = '';
+                for (const word of words) {
+                    const wordCandidate = wordChunk ? `${wordChunk} ${word}` : word;
+                    if (wordCandidate.length <= maxChunkChars) {
+                        wordChunk = wordCandidate;
+                    } else {
+                        const normalizedWordChunk = this.buildNaviSpeechText(wordChunk, maxChunkChars);
+                        if (normalizedWordChunk) {
+                            chunks.push(normalizedWordChunk);
+                        }
+                        wordChunk = word;
+                    }
+                }
+                if (wordChunk) {
+                    const normalizedWordChunk = this.buildNaviSpeechText(wordChunk, maxChunkChars);
+                    if (normalizedWordChunk) {
+                        chunks.push(normalizedWordChunk);
+                    }
+                }
+            }
+
+            if (current) {
+                pushCurrent();
+            }
+
+            return chunks.filter(Boolean);
+        },
+
+        getNaviTtsTimeoutMs(text) {
+            const base = Number(this.naviServerTtsRequestTimeoutMs) || 10000;
+            const lengthFactor = Math.min(5000, Math.max(0, String(text || '').length * 20));
+            return Math.max(6000, base + lengthFactor);
+        },
+
+        sleep(ms) {
+            const duration = Math.max(0, Number(ms) || 0);
+            return new Promise((resolve) => window.setTimeout(resolve, duration));
+        },
+
+        getNaviChunkPauseMs(chunkText = '', isLastChunk = false) {
+            if (isLastChunk) {
+                return 0;
+            }
+
+            const text = String(chunkText || '').trim();
+            const base = Math.max(25, Number(this.naviChunkPauseMs) || 70);
+
+            if (!text) {
+                return base;
+            }
+
+            if (/[:;]$/.test(text)) {
+                return base + 18;
+            }
+            if (/[.!?]$/.test(text)) {
+                return base + 14;
+            }
+            if (/,$/.test(text)) {
+                return base + 8;
+            }
+
+            return base;
+        },
+
+        startNaviLatencySample({ fromVoice = false } = {}) {
+            const now = performance.now();
+            return {
+                id: `navi-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+                fromVoice,
+                voiceCapturedAt: fromVoice ? this.naviLastVoiceInputAt : null,
+                sendStartedAt: now,
+                responseReceivedAt: null,
+                ttsStartedAt: null,
+                ttsCompletedAt: null,
+                chunkCount: 0,
+            };
+        },
+
+        publishNaviLatencySample(sample, status = 'ok') {
+            if (!sample) {
+                return;
+            }
+
+            const toMs = (value) => (Number.isFinite(value) ? Math.round(value) : null);
+            const metrics = {
+                id: sample.id,
+                status,
+                from_voice: sample.fromVoice,
+                stt_to_request_ms: sample.voiceCapturedAt ? toMs(sample.sendStartedAt - sample.voiceCapturedAt) : null,
+                backend_ms: sample.responseReceivedAt ? toMs(sample.responseReceivedAt - sample.sendStartedAt) : null,
+                tts_queue_ms: sample.ttsStartedAt && sample.responseReceivedAt
+                    ? toMs(sample.ttsStartedAt - sample.responseReceivedAt)
+                    : null,
+                tts_play_ms: sample.ttsCompletedAt && sample.ttsStartedAt
+                    ? toMs(sample.ttsCompletedAt - sample.ttsStartedAt)
+                    : null,
+                end_to_end_ms: sample.ttsCompletedAt
+                    ? toMs(sample.ttsCompletedAt - (sample.voiceCapturedAt || sample.sendStartedAt))
+                    : null,
+                chunk_count: sample.chunkCount || 0,
+                timestamp: new Date().toISOString(),
+            };
+
+            this.naviLatencyHistory.unshift(metrics);
+            if (this.naviLatencyHistory.length > 20) {
+                this.naviLatencyHistory.length = 20;
+            }
+
+            console.info('[NaviLatency]', metrics);
+        },
+
+        showAppToast(message, variant = 'info', durationMs = 3200) {
+            if (!message) {
+                return;
+            }
+
+            this.toastMessage = message;
+            this.toastVariant = variant;
+            this.showToast = true;
+
+            if (this.toastTimeoutId) {
+                window.clearTimeout(this.toastTimeoutId);
+            }
+
+            this.toastTimeoutId = window.setTimeout(() => {
+                this.showToast = false;
+                this.toastTimeoutId = null;
+            }, durationMs);
+        },
+
+        async saveNaviVoicePreferences(partialPreferences) {
+            try {
+                await fetch('/api/navi/preferences/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'X-CSRFToken': this.getCsrfToken(),
+                    },
+                    body: JSON.stringify(partialPreferences),
+                });
+            } catch (error) {
+                // Evita interrumpir la experiencia de voz por errores de red transitorios.
+                console.error('No se pudieron guardar preferencias de Navi.', error);
+            }
+        },
+
+        applyNaviVoicePreferences(preferences) {
+            if (!preferences || typeof preferences !== 'object') {
+                return;
+            }
+
+            if (typeof preferences.voice_output_enabled === 'boolean') {
+                this.naviVoiceOutputEnabled = preferences.voice_output_enabled;
+            }
+
+            if (typeof preferences.audio_only_mode === 'boolean') {
+                this.naviAudioOnlyMode = preferences.audio_only_mode;
+            }
+
+            const parsedRate = Number(preferences.speech_rate);
+            if (Number.isFinite(parsedRate)) {
+                this.naviSpeechRate = Math.max(0.6, Math.min(1.4, parsedRate));
+            }
+
+            const parsedPitch = Number(preferences.speech_pitch);
+            if (Number.isFinite(parsedPitch)) {
+                this.naviSpeechPitch = Math.max(0.6, Math.min(1.4, parsedPitch));
+            }
+
+            if (typeof preferences.speech_lang === 'string' && preferences.speech_lang.trim()) {
+                this.naviSpeechLanguage = preferences.speech_lang.trim();
+                if (this.naviRecognition) {
+                    this.naviRecognition.lang = this.naviSpeechLanguage;
+                }
+            }
+
+            if (typeof preferences.voice_profile === 'string' && ['suave', 'clara'].includes(preferences.voice_profile)) {
+                this.naviVoiceProfile = 'suave';
+            }
+
+            if (typeof preferences.onboarding_completed === 'boolean') {
+                this.naviOnboardingCompleted = preferences.onboarding_completed;
+            }
+        },
+
+        playNaviOnboardingTutorial(force = false) {
+            if (this.naviOnboardingRunning) {
+                return;
+            }
+            if (!force && this.naviOnboardingCompleted) {
+                return;
+            }
+
+            this.naviOnboardingRunning = true;
+
+            const tutorialText = [
+                'Hola, soy Navi. Bienvenida o bienvenido.',
+                'Este espacio esta pensado para familias y menores con discapacidad visual.',
+                'Para hablar conmigo, toca el circulo y espera el mensaje te escucho.',
+                'Si necesitas detener la escucha, vuelve a tocar el circulo.',
+                'Puedes decir comandos como: repetir, detener, hablar mas lento, hablar mas rapido, o modo solo audio.',
+                'Tambien puedes decir: ir a juegos, ir a biblioteca, ir a estadisticas, configuracion o perfil.',
+                'Cuando quieras, toca el circulo para comenzar.'
+            ].join(' ');
+
+            this.naviConversation.push({
+                localId: `tutorial-${Date.now()}`,
+                role: 'assistant',
+                content: tutorialText,
+            });
+            this.scrollNaviToBottom();
+            this.speakNaviText(tutorialText);
+
+            this.naviOnboardingCompleted = true;
+            this.saveNaviVoicePreferences({ onboarding_completed: true });
+            this.naviStatusMessage = 'Tutorial reproducido. Toca el circulo para hablar con Navi.';
+
+            window.setTimeout(() => {
+                this.naviOnboardingRunning = false;
+            }, 1200);
+        },
+
+        handleNaviVoiceCommand(rawTranscript) {
+            const command = this.normalizeVoiceCommand(rawTranscript);
+            if (!command) {
+                return false;
+            }
+
+            if (command.includes('detener') || command.includes('parar') || command.includes('silencio')) {
+                this.stopNaviSpeech();
+                this.naviStatusMessage = 'Audio detenido. Toca el circulo para seguir.';
+                return true;
+            }
+
+            if (command.includes('repetir')) {
+                const lastAssistantMessage = [...this.naviConversation]
+                    .reverse()
+                    .find((message) => message.role === 'assistant' && message.content);
+                if (lastAssistantMessage) {
+                    this.speakNaviText(lastAssistantMessage.content);
+                    this.naviStatusMessage = 'Repitiendo la ultima respuesta.';
+                } else {
+                    this.naviStatusMessage = 'Aun no tengo una respuesta para repetir.';
+                }
+                return true;
+            }
+
+            if (command.includes('tutorial') || command.includes('ayuda')) {
+                this.playNaviOnboardingTutorial(true);
+                return true;
+            }
+
+            if (command.includes('voz suave') || command.includes('voz infantil')) {
+                this.setNaviVoiceProfile('suave');
+                return true;
+            }
+
+            if (command.includes('voz clara') || command.includes('voz tutor')) {
+                this.setNaviVoiceProfile('suave');
+                this.naviStatusMessage = 'Mantendre voz infantil para Navi.';
+                return true;
+            }
+
+            if (command.includes('hablar mas lento') || command.includes('mas lento')) {
+                this.naviSpeechRate = Math.max(0.6, this.naviSpeechRate - 0.1);
+                this.saveNaviVoicePreferences({ speech_rate: this.naviSpeechRate });
+                this.naviStatusMessage = `Listo. Nueva velocidad ${this.naviSpeechRate.toFixed(2)}.`;
+                return true;
+            }
+
+            if (command.includes('hablar mas rapido') || command.includes('mas rapido')) {
+                this.naviSpeechRate = Math.min(1.4, this.naviSpeechRate + 0.1);
+                this.saveNaviVoicePreferences({ speech_rate: this.naviSpeechRate });
+                this.naviStatusMessage = `Listo. Nueva velocidad ${this.naviSpeechRate.toFixed(2)}.`;
+                return true;
+            }
+
+            if (command.includes('modo solo audio')) {
+                const activate = !command.includes('desactivar') && !command.includes('quitar');
+                this.naviAudioOnlyMode = activate;
+                this.saveNaviVoicePreferences({ audio_only_mode: this.naviAudioOnlyMode });
+                this.naviStatusMessage = activate
+                    ? 'Modo solo audio activado.'
+                    : 'Modo solo audio desactivado.';
+                return true;
+            }
+
+            const sectionMap = {
+                juegos: 'juegos',
+                biblioteca: 'biblioteca',
+                estadisticas: 'estadisticas',
+                configuracion: 'configuracion',
+                perfil: 'perfil',
+                navi: 'navi',
+            };
+            for (const key in sectionMap) {
+                if (command.includes(`ir a ${key}`) || command === key) {
+                    this.currentMode = 'tutor';
+                    this.changeSection(sectionMap[key]);
+                    this.naviStatusMessage = `Abriendo seccion ${key}.`;
+                    return true;
+                }
+            }
+
+            return false;
+        },
+
+        initNaviVoice() {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            this.naviVoiceSupported = Boolean(SpeechRecognition);
+            this.naviVoiceOutputSupported = typeof Audio !== 'undefined';
+
+            const savedVoiceOutput = localStorage.getItem('navi-voice-output-enabled');
+            if (savedVoiceOutput === '0') {
+                this.naviVoiceOutputEnabled = false;
+            }
+
+            if (this.naviVoiceSupported) {
+                const recognition = new SpeechRecognition();
+                recognition.lang = this.naviSpeechLanguage;
+                recognition.interimResults = false;
+                recognition.continuous = false;
+                recognition.maxAlternatives = 1;
+
+                recognition.onstart = () => {
+                    this.naviListening = true;
+                    this.naviError = '';
+                    this.naviStatusMessage = 'Te escucho... habla ahora. Toca el circulo para detener.';
+                };
+
+                recognition.onresult = (event) => {
+                    const transcript = event.results?.[0]?.[0]?.transcript?.trim() || '';
+                    if (!transcript) {
+                        this.naviStatusMessage = 'No detecte voz. Toca el circulo para intentar de nuevo.';
+                        return;
+                    }
+
+                    if (this.handleNaviVoiceCommand(transcript)) {
+                        return;
+                    }
+
+                    this.naviInput = transcript;
+                    this.naviLastVoiceInputAt = performance.now();
+                    this.naviStatusMessage = 'Entendido. Estoy procesando tu mensaje...';
+                    this.sendNaviMessage(transcript);
+                };
+
+                recognition.onerror = (event) => {
+                    this.naviListening = false;
+
+                    if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
+                        this.naviError = 'Debes permitir acceso al microfono para usar Navi por voz.';
+                    } else if (event.error === 'no-speech') {
+                        this.naviError = 'No detecte voz. Intenta hablar mas cerca del microfono.';
+                    } else {
+                        this.naviError = 'Ocurrio un problema con el reconocimiento de voz.';
+                    }
+
+                    this.showAppToast(this.naviError, 'error');
+
+                    this.naviStatusMessage = 'No pude escucharte. Toca el circulo para reintentar.';
+                };
+
+                recognition.onend = () => {
+                    this.naviListening = false;
+                    if (!this.naviLoading && !this.naviSpeaking) {
+                        this.naviStatusMessage = 'Toca el circulo para hablar con Navi.';
+                    }
+                };
+
+                this.naviRecognition = recognition;
+            } else {
+                this.naviStatusMessage = 'Este navegador no soporta dictado por voz. Usa un navegador compatible con microfono.';
+            }
+        },
+
+        toggleNaviVoiceInput() {
+            if (!this.naviVoiceSupported || !this.naviRecognition) {
+                this.focusNaviInput();
+                return;
+            }
+
+            if (this.naviLoading) {
+                this.naviStatusMessage = 'Espera un momento, estoy generando respuesta.';
+                return;
+            }
+
+            if (this.naviListening) {
+                this.stopNaviVoiceInput();
+                return;
+            }
+
+            this.startNaviVoiceInput();
+        },
+
+        startNaviVoiceInput() {
+            if (!this.naviRecognition || this.naviListening) {
+                return;
+            }
+
+            this.stopNaviSpeech();
+
+            try {
+                this.naviRecognition.start();
+            } catch (error) {
+                this.naviError = 'No fue posible iniciar el microfono en este momento.';
+                this.naviStatusMessage = 'Intenta de nuevo en unos segundos.';
+                this.showAppToast(this.naviError, 'error');
+            }
+        },
+
+        stopNaviVoiceInput() {
+            if (!this.naviRecognition || !this.naviListening) {
+                return;
+            }
+
+            try {
+                this.naviRecognition.stop();
+            } catch (error) {
+                this.naviListening = false;
+            }
+        },
+
+        toggleNaviVoiceOutput() {
+            if (!this.naviVoiceOutputSupported) {
+                return;
+            }
+
+            this.naviVoiceOutputEnabled = !this.naviVoiceOutputEnabled;
+            localStorage.setItem('navi-voice-output-enabled', this.naviVoiceOutputEnabled ? '1' : '0');
+            this.saveNaviVoicePreferences({ voice_output_enabled: this.naviVoiceOutputEnabled });
+
+            if (!this.naviVoiceOutputEnabled) {
+                this.stopNaviSpeech();
+                this.naviStatusMessage = 'La salida de voz de Navi esta desactivada.';
+            } else {
+                this.naviStatusMessage = 'La salida de voz de Navi esta activada.';
+            }
+        },
+
+        async fetchNaviServerTts(text, timeoutOverrideMs = null) {
+            const controller = new AbortController();
+            const timeoutMs = Math.max(2500, Number(timeoutOverrideMs) || this.getNaviTtsTimeoutMs(text));
+            const timeoutId = window.setTimeout(() => controller.abort(), timeoutMs);
+
+            let response;
+            try {
+                response = await fetch('/api/navi/tts/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'X-CSRFToken': this.getCsrfToken(),
+                    },
+                    body: JSON.stringify({
+                        text,
+                        voice_profile: 'suave',
+                    }),
+                    signal: controller.signal,
+                });
+            } catch (error) {
+                if (error && error.name === 'AbortError') {
+                    throw new Error('La voz natural esta tardando demasiado.');
+                }
+                throw error;
+            } finally {
+                window.clearTimeout(timeoutId);
+            }
+
+            const data = await response.json();
+            if (!response.ok) {
+                throw new Error(data.error || 'No se pudo sintetizar audio.');
+            }
+
+            if (data.tts_provider !== 'gemini') {
+                throw new Error('La respuesta de voz no proviene de Gemini.');
+            }
+
+            return data;
+        },
+
+        async playNaviServerAudio(text, timeoutOverrideMs = null) {
+            const data = await this.fetchNaviServerTts(text, timeoutOverrideMs);
+            const mimeType = data.mime_type || 'audio/wav';
+            const audioBase64 = data.audio_base64;
+            if (!audioBase64) {
+                throw new Error('Audio vacio recibido de TTS.');
+            }
+
+            const normalizedMimeType = String(mimeType).split(';')[0].trim().toLowerCase();
+            const probeAudio = document.createElement('audio');
+            if (normalizedMimeType && !probeAudio.canPlayType(normalizedMimeType)) {
+                throw new Error(`Formato de audio no compatible en este navegador: ${mimeType}`);
+            }
+
+            const audio = new Audio(`data:${mimeType};base64,${audioBase64}`);
+            audio.volume = this.getAudioMultiplier();
+            audio.playbackRate = Math.max(0.9, Math.min(1.35, Number(this.naviServerPlaybackRate) || 1.0));
+            // Desactiva preservacion de pitch para que el tono suba junto con la velocidad.
+            try {
+                audio.preservesPitch = false;
+                audio.mozPreservesPitch = false;
+                audio.webkitPreservesPitch = false;
+            } catch (e) {
+                // Algunos navegadores no soportan estas propiedades.
+            }
+
+            this.naviAudioElement = audio;
+
+            await new Promise((resolve, reject) => {
+                audio.onplay = () => {
+                    this.naviSpeaking = true;
+                    this.naviStatusMessage = 'Estoy respondiendo con voz de Gemini.';
+                };
+
+                audio.onended = () => {
+                    this.naviSpeaking = false;
+                    this.naviAudioElement = null;
+                    if (!this.naviListening && !this.naviLoading) {
+                        this.naviStatusMessage = 'Toca el circulo para hablar con Navi.';
+                    }
+                    resolve();
+                };
+
+                audio.onerror = () => {
+                    this.naviSpeaking = false;
+                    this.naviAudioElement = null;
+                    reject(new Error('No se pudo reproducir el audio TTS.'));
+                };
+
+                audio.play().catch((error) => {
+                    this.naviSpeaking = false;
+                    this.naviAudioElement = null;
+                    reject(error instanceof Error ? error : new Error('No se pudo iniciar la reproduccion de audio.'));
+                });
+            });
+        },
+
+        async speakNaviText(text, telemetry = null) {
+            if (!this.naviVoiceOutputEnabled || !text) {
+                return;
+            }
+
+            const speechChunks = this.splitNaviSpeechChunks(text);
+            if (!speechChunks.length) {
+                return;
+            }
+
+            this.stopNaviSpeech();
+            this.naviStatusMessage = 'Generando voz de Gemini...';
+            let skippedChunks = 0;
+
+            for (let index = 0; index < speechChunks.length; index += 1) {
+                const isFirstChunk = index === 0;
+                const isLastChunk = index === speechChunks.length - 1;
+                const chunk = this.applyNaviProsody(speechChunks[index], { isLastChunk });
+
+                if (telemetry) {
+                    telemetry.chunkCount = speechChunks.length;
+                }
+
+                if (!isFirstChunk) {
+                    this.naviStatusMessage = `Continuando respuesta (${index + 1}/${speechChunks.length})...`;
+                }
+
+                let played = false;
+                let lastChunkError = null;
+
+                try {
+                    await this.playNaviServerAudio(chunk, this.getNaviTtsTimeoutMs(chunk));
+                    played = true;
+                } catch (error) {
+                    lastChunkError = error;
+                }
+
+                if (!played) {
+                    try {
+                        this.naviStatusMessage = 'Ajustando voz para continuar...';
+                        await this.playNaviServerAudio(chunk, this.getNaviTtsTimeoutMs(chunk) + 4000);
+                        played = true;
+                    } catch (retrySameChunkError) {
+                        lastChunkError = retrySameChunkError;
+                    }
+                }
+
+                if (!played) {
+                    const errorMessage = String(lastChunkError?.message || '').toLowerCase();
+                    const timedOut = errorMessage.includes('tardando demasiado');
+                    const quickSpeechText = this.buildNaviSpeechText(chunk, 96);
+
+                    if (timedOut && quickSpeechText && quickSpeechText !== chunk) {
+                        try {
+                            this.naviStatusMessage = 'Reintentando bloque de voz mas breve...';
+                            await this.playNaviServerAudio(quickSpeechText, 9000);
+                            played = true;
+                        } catch (retryShortError) {
+                            lastChunkError = retryShortError;
+                        }
+                    }
+                }
+
+                if (!played) {
+                    skippedChunks += 1;
+                    if (isLastChunk) {
+                        this.naviStatusMessage = 'No pude completar la ultima parte de la respuesta por voz.';
+                        this.showAppToast(lastChunkError?.message || 'No pude generar audio con Gemini. Intenta de nuevo.', 'warning');
+                        if (telemetry) {
+                            telemetry.ttsCompletedAt = performance.now();
+                            this.publishNaviLatencySample(telemetry, 'tts-partial');
+                        }
+                        return;
+                    }
+
+                    this.naviStatusMessage = `Continuando respuesta (${index + 2}/${speechChunks.length})...`;
+                    continue;
+                }
+
+                if (telemetry && !telemetry.ttsStartedAt) {
+                    telemetry.ttsStartedAt = performance.now();
+                }
+
+                if (isLastChunk) {
+                    if (!this.naviListening && !this.naviLoading) {
+                        this.naviStatusMessage = 'Toca el circulo para hablar con Navi.';
+                    }
+                } else {
+                    await this.sleep(this.getNaviChunkPauseMs(chunk, false));
+                }
+            }
+
+            if (skippedChunks > 0) {
+                this.showAppToast(`Reproduje la mayor parte de la respuesta. Omiti ${skippedChunks} bloque(s) por conectividad.`, 'warning');
+            }
+
+            if (telemetry) {
+                telemetry.ttsCompletedAt = performance.now();
+                this.publishNaviLatencySample(telemetry, skippedChunks > 0 ? 'tts-partial' : 'ok');
+            }
+        },
+
+        setNaviVoiceProfile(profile) {
+            if (!['suave', 'clara'].includes(profile)) {
+                return;
+            }
+            this.naviVoiceProfile = 'suave';
+            this.saveNaviVoicePreferences({ voice_profile: 'suave' });
+            this.naviStatusMessage = 'Voz infantil activada.';
+        },
+
+        toggleNaviAudioOnlyMode() {
+            this.naviAudioOnlyMode = !this.naviAudioOnlyMode;
+            this.saveNaviVoicePreferences({ audio_only_mode: this.naviAudioOnlyMode });
+            this.naviStatusMessage = this.naviAudioOnlyMode
+                ? 'Modo solo audio activado.'
+                : 'Modo solo audio desactivado.';
+        },
+
+        stopNaviSpeech() {
+            if (this.naviAudioElement) {
+                this.naviAudioElement.pause();
+                this.naviAudioElement.currentTime = 0;
+                this.naviAudioElement = null;
+            }
+            this.naviSpeaking = false;
+        },
+
+        getCsrfToken() {
+            const cookies = document.cookie ? document.cookie.split('; ') : [];
+            const csrfCookie = cookies.find((row) => row.startsWith('csrftoken='));
+            if (!csrfCookie) {
+                return '';
+            }
+            return decodeURIComponent(csrfCookie.split('=')[1]);
+        },
+
+        focusNaviInput() {
+            this.$nextTick(() => {
+                this.$refs.naviInput?.focus();
+            });
+        },
+
+        scrollNaviToBottom() {
+            this.$nextTick(() => {
+                const container = this.$refs.naviMessagesContainer;
+                if (!container) return;
+                container.scrollTop = container.scrollHeight;
+            });
+        },
+
+        async loadNaviConversation() {
+            this.naviError = '';
+            try {
+                const response = await fetch('/api/navi/conversation/', {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('No se pudo cargar la conversacion.');
+                }
+
+                const data = await response.json();
+                this.naviConversationId = data.conversation_id;
+                this.naviConversation = Array.isArray(data.messages) ? data.messages : [];
+                this.applyNaviVoicePreferences(data.voice_preferences || {});
+                this.naviLoaded = true;
+                this.scrollNaviToBottom();
+
+                if (!this.naviOnboardingCompleted) {
+                    this.playNaviOnboardingTutorial(false);
+                }
+            } catch (error) {
+                this.naviError = 'No pude cargar tu conversacion. Recarga la pagina para intentarlo de nuevo.';
+                this.showAppToast(this.naviError, 'error');
+            }
+        },
+
+        async sendNaviMessage(forcedMessage = null) {
+            const message = (forcedMessage ?? this.naviInput).trim();
+            if (!message || this.naviLoading) {
+                return;
+            }
+
+            const telemetry = this.startNaviLatencySample({ fromVoice: forcedMessage !== null });
+
+            if (this.handleNaviVoiceCommand(message)) {
+                this.naviInput = '';
+                return;
+            }
+
+            this.naviError = '';
+            this.naviLoading = true;
+            this.naviStatusMessage = 'Estoy pensando tu respuesta...';
+
+            const optimisticUserMessage = {
+                localId: `local-${Date.now()}`,
+                role: 'user',
+                content: message,
+            };
+            this.naviConversation.push(optimisticUserMessage);
+            this.naviInput = '';
+            this.scrollNaviToBottom();
+
+            try {
+                const response = await fetch('/api/navi/chat/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'X-CSRFToken': this.getCsrfToken(),
+                    },
+                    body: JSON.stringify({
+                        message,
+                        conversation_id: this.naviConversationId,
+                    }),
+                });
+
+                let data = null;
+                try {
+                    data = await response.json();
+                } catch (parseError) {
+                    data = null;
+                }
+
+                if (!response.ok) {
+                    const backendError = data && typeof data.error === 'string' ? data.error : '';
+                    throw new Error(backendError || `No se pudo obtener respuesta de Navi (HTTP ${response.status}).`);
+                }
+
+                this.naviConversationId = data.conversation_id || this.naviConversationId;
+                if (data.message) {
+                    this.naviConversation.push(data.message);
+                    telemetry.responseReceivedAt = performance.now();
+                    this.speakNaviText(data.message.content, telemetry);
+                } else {
+                    this.publishNaviLatencySample(telemetry, 'no-message');
+                }
+                this.scrollNaviToBottom();
+                if (!this.naviSpeaking) {
+                    this.naviStatusMessage = 'Toca el circulo para hablar con Navi.';
+                }
+            } catch (error) {
+                this.naviError = error.message || 'No pude responder en este momento.';
+                this.publishNaviLatencySample(telemetry, 'chat-error');
+                this.naviConversation.push({
+                    localId: `err-${Date.now()}`,
+                    role: 'assistant',
+                    content: this.naviError,
+                });
+                this.scrollNaviToBottom();
+                this.naviStatusMessage = 'Toca el circulo para intentar de nuevo.';
+                this.showAppToast(this.naviError, 'error');
+            } finally {
+                this.naviLoading = false;
+            }
         },
 
         changeSection(section) {
@@ -506,19 +1419,14 @@ createApp({
 
             if (item.isFavorite) {
                 this.biblioteca.favoritos.push(item);
-                this.toastMessage = `"${item.content}" ha sido guardado a tus Favoritos.`;
+                this.showAppToast(`"${item.content}" ha sido guardado a tus Favoritos.`, 'success');
             } else {
                 const index = this.biblioteca.favoritos.findIndex((fav) => fav.id === item.id);
                 if (index !== -1) {
                     this.biblioteca.favoritos.splice(index, 1);
                 }
-                this.toastMessage = `"${item.content}" ha sido eliminado de tus Favoritos.`;
+                this.showAppToast(`"${item.content}" ha sido eliminado de tus Favoritos.`, 'info');
             }
-
-            this.showToast = true;
-            setTimeout(() => {
-                this.showToast = false;
-            }, 3000);
         },
 
         getIconClass(item) {
@@ -667,9 +1575,28 @@ createApp({
 
     watch: {
         currentMode(newMode) {
+            if (this.modeTransitionTimeoutId) {
+                window.clearTimeout(this.modeTransitionTimeoutId);
+            }
+            this.isModeTransitioning = true;
+            this.modeTransitionTimeoutId = window.setTimeout(() => {
+                this.isModeTransitioning = false;
+                this.modeTransitionTimeoutId = null;
+            }, this.modeTransitionDurationMs);
+
             // Cuando se cambia a modo Navicito, ir a la seccion NAVI
             if (newMode === 'navicito') {
                 this.currentSection = 'navi';
+            }
+        },
+
+        currentSection(newSection) {
+            if (newSection === 'navi' && !this.naviLoaded) {
+                this.loadNaviConversation();
+            }
+
+            if (newSection === 'navi') {
+                this.naviAudioOnlyMode = true;
             }
         },
 
@@ -695,6 +1622,7 @@ createApp({
     },
 
     mounted() {
+        document.documentElement.style.setProperty('--mode-transition-duration', `${this.modeTransitionDurationMs}ms`);
         this.systemThemeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
 
         const savedThemePreference = localStorage.getItem('navi-theme-preference');
@@ -705,6 +1633,7 @@ createApp({
         this.applyThemePreference();
         this.loadAudioSettings();
         this.applyAudioSettings();
+        this.initNaviVoice();
         document.addEventListener('play', this.handleMediaPlay, true);
 
         if (this.systemThemeMediaQuery && this.systemThemeMediaQuery.addEventListener) {
@@ -725,6 +1654,10 @@ createApp({
             this.currentMode = 'tutor';
             this.currentSection = 'perfil';
             this.showEditProfileModal = true;
+        }
+
+        if (this.currentSection === 'navi') {
+            this.loadNaviConversation();
         }
 
         this.syncModalScrollLock();
@@ -762,6 +1695,16 @@ createApp({
     },
 
     beforeUnmount() {
+        if (this.toastTimeoutId) {
+            window.clearTimeout(this.toastTimeoutId);
+            this.toastTimeoutId = null;
+        }
+        if (this.modeTransitionTimeoutId) {
+            window.clearTimeout(this.modeTransitionTimeoutId);
+            this.modeTransitionTimeoutId = null;
+        }
+        this.stopNaviVoiceInput();
+        this.stopNaviSpeech();
         if (this.systemThemeMediaQuery && this.systemThemeMediaQuery.removeEventListener) {
             this.systemThemeMediaQuery.removeEventListener('change', this.handleSystemThemeChange);
         }
