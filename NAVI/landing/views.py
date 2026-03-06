@@ -13,6 +13,7 @@ from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.utils import timezone
 from django.views.decorators.http import require_GET, require_POST
+from django.views.decorators.csrf import ensure_csrf_cookie
 
 from .forms import PerfilUpdateForm
 from .models import Conversation, Message, NaviVoicePreference, Usuario
@@ -336,6 +337,7 @@ def navi_tts_view(request):
 
 
 @login_required
+@ensure_csrf_cookie
 def app_view(request):
     perfil_data = _build_perfil_data(request.user)
     perfil_form_errors = request.session.pop('perfil_form_errors', {})
