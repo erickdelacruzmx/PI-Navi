@@ -1020,6 +1020,20 @@ createApp({
 
                 if (!played) {
                     skippedChunks += 1;
+                    const authBlocked = String(lastChunkError?.message || '').toLowerCase().includes('403')
+                        || String(lastChunkError?.message || '').toLowerCase().includes('sesion ha expirado')
+                        || String(lastChunkError?.message || '').toLowerCase().includes('solicitud bloqueada');
+                    if (authBlocked) {
+                        this.naviVoiceOutputEnabled = false;
+                        this.naviStatusMessage = 'Voz pausada por bloqueo de seguridad. Recarga sesion para continuar.';
+                        this.showAppToast('Bloqueo 403 detectado. Recarga sesion y vuelve a intentar.', 'error');
+                        if (telemetry) {
+                            telemetry.ttsCompletedAt = performance.now();
+                            this.publishNaviLatencySample(telemetry, 'auth-blocked');
+                        }
+                        return;
+                    }
+
                     if (isLastChunk) {
                         this.naviStatusMessage = 'No pude completar la ultima parte de la respuesta por voz.';
                         this.showAppToast(lastChunkError?.message || 'No pude generar audio con Gemini. Intenta de nuevo.', 'warning');
@@ -1084,6 +1098,11 @@ createApp({
         },
 
         getCsrfToken() {
+            const metaToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+            if (metaToken && metaToken !== 'NOTPROVIDED') {
+                return metaToken;
+            }
+
             const cookies = document.cookie ? document.cookie.split('; ') : [];
             const csrfCookie = cookies.find((row) => row.startsWith('csrftoken='));
             if (!csrfCookie) {
