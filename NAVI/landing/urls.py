@@ -16,4 +16,6 @@ urlpatterns = [
     path('perfil/actualizar/', views.perfil_update_view, name='perfil_actualizar'),
     path('perfil/eliminar/', views.perfil_delete_view, name='perfil_eliminar'),
     path('configuracion/', views.configuracion_view, name='configuracion'),
+    path('politica-privacidad/', views.politica_privacidad, name='politica_privacidad'),
+    path('eliminar-datos/', views.eliminar_datos, name='eliminar_datos'),
 ]

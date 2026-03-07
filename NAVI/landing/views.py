@@ -69,13 +69,6 @@ def health_view(request):
     return JsonResponse({'status': 'ok'})
 
 
-@login_required
-@require_GET
-@ensure_csrf_cookie
-def csrf_bootstrap_view(request):
-    return JsonResponse({'ok': True})
-
-
 def _get_or_create_active_conversation(user):
     conversation = (
         Conversation.objects.filter(user=user, is_active=True)
@@ -328,12 +321,6 @@ def navi_tts_view(request):
 
     try:
         tts_audio = generate_navi_tts_audio(text=text, voice_profile=voice_profile)
-    except RuntimeError as exc:
-        if 'GEMINI_API_KEY' in str(exc):
-            logger.error('TTS no configurado para user_id=%s: %s', request.user.id, exc)
-            return JsonResponse({'error': 'TTS no configurado en el servidor. Falta GEMINI_API_KEY valida.'}, status=503)
-        logger.exception('Error TTS Gemini para user_id=%s: %s', request.user.id, exc)
-        return JsonResponse({'error': 'No fue posible generar audio en este momento.'}, status=502)
     except Exception as exc:
         logger.exception('Error TTS Gemini para user_id=%s: %s', request.user.id, exc)
         return JsonResponse({'error': 'No fue posible generar audio en este momento.'}, status=502)
@@ -452,3 +439,13 @@ def perfil_delete_view(request):
     logout(request)
     messages.success(request, 'Tu cuenta se eliminó correctamente.')
     return redirect('landing:index')
+
+
+def politica_privacidad(request):
+    """Renderiza la página de Política de Privacidad requerida por Meta."""
+    return render(request, 'legal/politica_privacidad.html')
+
+
+def eliminar_datos(request):
+    """Renderiza las instrucciones para la eliminación de datos de usuario."""
+    return render(request, 'legal/eliminar_datos.html')
